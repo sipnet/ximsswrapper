@@ -325,7 +325,7 @@ function XimssSession() {
                         if (node) {
                             node = node.nextSibling;
                         }
-                        while (node !== null) {
+                        while (node != null) {
                             var partName = node.tagName.toUpperCase();
                             var partValue = node.textContent;
                             nameToValue[partName] = partValue;
@@ -574,13 +574,15 @@ function XimssSession() {
                 return;
             }
 
-            if (vCardUtil.getValues(self.vCardXML, "EMAIL") !== null)
+            if (vCardUtil.getValues(self.vCardXML, "EMAIL") != null)
                 value = vCardUtil.first(vCardUtil.getValues(self.vCardXML, "EMAIL"));
             if (value) {
                 self.name = value;
                 self.nameIsCopiedFromEmail = true;
                 return;
             }
+
+
         }
 
         function fillEmailsFromVCardXML() {
@@ -611,7 +613,7 @@ function XimssSession() {
                     node = node.nextSibling;
                 }
                 addressParts = [];
-                while (node !== null) {
+                while (node != null) {
                     if (node.textContent) {
                         addressParts.push(node.textContent);
                     }
@@ -656,7 +658,10 @@ function XimssSession() {
                 if (callback) {
                     callback();
                 }
+
             });
+
+
         };
 
         this.updateFromVCardGroup = function () {
@@ -989,14 +994,14 @@ function XimssSession() {
         ifFirefox: navigator.userAgent.toLowerCase().indexOf('firefox') > -1,
 
         ximssErr: function (errStr) {
-            if (DEBUG_SIPNET === true) console.log("ximssErr():", errStr);
+            if (DEBUG_SIPNET == true) console.log("ximssErr():", errStr);
             if (this.onXimssError) this.onXimssError(errStr);
         },
 
 
         initRTC: function (callid, audioIn) {
 
-            if (DEBUG_SIPNET === true) console.log("Start call with device: " + audioIn);
+            if (DEBUG_SIPNET == true) console.log("Start call with device: " + audioIn);
 
             this.audioIn = audioIn;
 
@@ -1044,7 +1049,7 @@ function XimssSession() {
 
         initPeerConnection: function (callid) {
 
-            if (this.currentCalls[callid]['pc'] !== null) {
+            if (this.currentCalls[callid]['pc'] != null) {
                 this.unsubscribePC(this.currentCalls[callid]['pc']);
                 this.currentCalls[callid]['pc'].close();
                 this.currentCalls[callid]['pc'] = null;
@@ -1056,7 +1061,7 @@ function XimssSession() {
             var self = this;
 
             this.currentCalls[callid]['pc'].oniceconnectionstatechange = function (event) {
-                if (DEBUG_SIPNET === true) console.log('iceConnectionState: ' + self.currentCalls[callid]['pc'].iceConnectionState);
+                if (DEBUG_SIPNET == true) console.log('iceConnectionState: ' + self.currentCalls[callid]['pc'].iceConnectionState);
                 if (self.currentCalls[callid]['pc'].iceConnectionState === "failed" ||
                     self.currentCalls[callid]['pc'].iceConnectionState === "disconnected" ||
                     self.currentCalls[callid]['pc'].iceConnectionState === "closed") {
@@ -1083,14 +1088,14 @@ function XimssSession() {
                     }
                 }
 
-                if (DEBUG_SIPNET === true) console.log('onicegatheringstatechange: ' + self.currentCalls[callid]['pc'].iceGatheringState);
+                if (DEBUG_SIPNET == true) console.log('onicegatheringstatechange: ' + self.currentCalls[callid]['pc'].iceGatheringState);
             }
 
 
             this.currentCalls[callid]['pc'].onicecandidate = function (event) {
                 if (!event.candidate) {
-                    if (DEBUG_SIPNET === true) console.log('Candidate: ' + event.candidate);
-                    if (DEBUG_SIPNET === true) console.log(self);
+                    if (DEBUG_SIPNET == true) console.log('Candidate: ' + event.candidate);
+                    if (DEBUG_SIPNET == true) console.log(self);
                 }
             };
 
@@ -1098,10 +1103,10 @@ function XimssSession() {
 
             this.currentCalls[callid]['pc'].createOffer(
                 function (desc) {
-                    if (DEBUG_SIPNET === true) console.log("createOffer_success(): \ndesc.sdp:\n" + desc.sdp + "desc:", desc);
+                    if (DEBUG_SIPNET == true) console.log("createOffer_success(): \ndesc.sdp:\n" + desc.sdp + "desc:", desc);
                     self.currentCalls[callid]['pc'].setLocalDescription(desc,
                         function () {
-                            if (DEBUG_SIPNET === true) console.log("Success setLocalDescription2222");
+                            if (DEBUG_SIPNET == true) console.log("Success setLocalDescription2222");
 
                             self.startCallTimer=setTimeout(function(){
                                 if (self.startCallTimer!==null) {
@@ -1113,19 +1118,19 @@ function XimssSession() {
 
                         },
                         function (errObj) {
-                            if (DEBUG_SIPNET === true) console.log("UnSuccess setLocalDescription");
+                            if (DEBUG_SIPNET == true) console.log("UnSuccess setLocalDescription");
                             self.ximssErr('Error create local SDP:' + JSON.stringify(errObj, null, ' '));
                         }
                     );
                 },
                 function (err) {
-                    if (DEBUG_SIPNET === true) console.log("createOffer_error():", err);
+                    if (DEBUG_SIPNET == true) console.log("createOffer_error():", err);
                 },
                 {}
             );
 
             this.callStart=()=>{
-                if (self.theSession !== null) {
+                if (self.theSession != null) {
 
                     var callLeg = "leg_" + self.callLegCount++;
 
@@ -1140,7 +1145,7 @@ function XimssSession() {
 
                     var sdpXml = self.theSession.createXMLNode(self.xmlSdp);
 
-                    if (self.isSdpText === false) {
+                    if (self.isSdpText == false) {
                         var docXML = (new DOMParser()).parseFromString("<root/>", "text/xml");
                         sdpXml = SDPXML.parseText(self.fixIpV6SDP(self.currentCalls[callid]['pc'].localDescription.sdp), docXML);
                         SDPXML.adjustWebRTCXML(sdpXml, null);
@@ -1161,7 +1166,7 @@ function XimssSession() {
 
         initRTCAnswer: function (callid, audioIn, isVideo) {
 
-            if (DEBUG_SIPNET === true) console.log("Answer with device: " + audioIn);
+            if (DEBUG_SIPNET == true) console.log("Answer with device: " + audioIn);
 
             this.audioIn = audioIn;
 
@@ -1218,7 +1223,7 @@ function XimssSession() {
 
         initPeerConnectionAnswer: function (callid) {
 
-            if (this.currentCalls[callid]['pc'] !== null) {
+            if (this.currentCalls[callid]['pc'] != null) {
                 this.unsubscribePC(this.currentCalls[callid]['pc']);
                 this.currentCalls[callid]['pc'].close();
                 this.currentCalls[callid]['pc'] = null;
@@ -1234,6 +1239,7 @@ function XimssSession() {
                 if (self.currentCalls[callid]['pc'] !== null)
                     if (DEBUG_SIPNET === true)
                         console.log('onicegatheringstatechange: ' + self.currentCalls[callid]['pc'].iceGatheringState);
+
 
 
                 //после сбора ICE запускаем и обнуляем таймер если он не отработал раньше
@@ -1267,12 +1273,12 @@ function XimssSession() {
 
             this.currentCalls[callid]['pc'].addStream(this.currentCalls[callid]['localStream']);
 
-            if (this.currentCalls[callid]['remoteSDP'] !== null) {
+            if (this.currentCalls[callid]['remoteSDP'] != null) {
 
                 var desc = null;
                 var compare = this.versionCompare(this.CGPversion, '6.2.0');
 
-                if (self.isSdpText === false && compare > 0) {
+                if (self.isSdpText == false && compare > 0) {
                     desc = (new RTCSessionDescription({
                         type: "offer",
                         sdp: this.currentCalls[callid]['remoteSDP']
@@ -1284,13 +1290,13 @@ function XimssSession() {
                     }));
                 }
 
-                if (DEBUG_SIPNET === true) console.log("IncomingCall(): \ndesc.sdp:\n" + desc.sdp + "desc:", desc);
+                if (DEBUG_SIPNET == true) console.log("IncomingCall(): \ndesc.sdp:\n" + desc.sdp + "desc:", desc);
 
                 this.currentCalls[callid]['pc'].setRemoteDescription(desc,
                     function () {
                         self.currentCalls[callid]['pc'].createAnswer(
                             function (desc) {
-                                if (DEBUG_SIPNET === true) console.log("createAnswer_success(): \ndesc.sdp:\n" + desc.sdp + "desc:", desc);
+                                if (DEBUG_SIPNET == true) console.log("createAnswer_success(): \ndesc.sdp:\n" + desc.sdp + "desc:", desc);
 
                                 self.currentCalls[callid]['pc'].setLocalDescription(desc,
                                     function () {
@@ -1306,14 +1312,14 @@ function XimssSession() {
                                     },
 
                                     function (errObj) {
-                                        if (DEBUG_SIPNET === true) console.log("UnSuccess setLocalDescription");
+                                        if (DEBUG_SIPNET == true) console.log("UnSuccess setLocalDescription");
                                         self.ximssErr('Error create local SDP:' + JSON.stringify(errObj, null, ' '));
                                     }
                                 );
                             },
 
                             function (err) {
-                                if (DEBUG_SIPNET === true) console.log("createAnswer_error():", err);
+                                if (DEBUG_SIPNET == true) console.log("createAnswer_error():", err);
                             },
                             {}
                         );
@@ -1321,16 +1327,16 @@ function XimssSession() {
                     },
 
                     function (errObj) {
-                        if (DEBUG_SIPNET === true) console.log("UnSuccess setRemoteDescription");
+                        if (DEBUG_SIPNET == true) console.log("UnSuccess setRemoteDescription");
                     }
                 );
             } else {
                 this.currentCalls[callid]['pc'].createOffer(
                     function (desc) {
-                        if (DEBUG_SIPNET === true) console.log("createOffer_success(): \ndesc.sdp:\n" + desc.sdp + "desc:", desc);
+                        if (DEBUG_SIPNET == true) console.log("createOffer_success(): \ndesc.sdp:\n" + desc.sdp + "desc:", desc);
                         self.currentCalls[callid]['pc'].setLocalDescription(desc,
                             function () {
-                                if (DEBUG_SIPNET === true) console.log("Success setLocalDescription2222");
+                                if (DEBUG_SIPNET == true) console.log("Success setLocalDescription2222");
 
                                 self.answerCallTimer=setTimeout(function(){
                                     if (self.answerCallTimer!==null) {
@@ -1342,26 +1348,26 @@ function XimssSession() {
 
                             },
                             function (errObj) {
-                                if (DEBUG_SIPNET === true) console.log("UnSuccess setLocalDescription");
+                                if (DEBUG_SIPNET == true) console.log("UnSuccess setLocalDescription");
                                 self.ximssErr('Error create local SDP:' + JSON.stringify(errObj, null, ' '));
                             }
                         );
                     },
                     function (err) {
-                        if (DEBUG_SIPNET === true) console.log("createOffer_error():", err);
+                        if (DEBUG_SIPNET == true) console.log("createOffer_error():", err);
                     },
                     {}
                 );
             }
 
             this.callAnswer=()=> {
-                if (self.theSession !== null) {
+                if (self.theSession != null) {
                     var callAcceptResponse = self.theSession.createXMLNode("callAccept");
                     callAcceptResponse.setAttribute("callLeg", self.currentCalls[callid]['callLeg']);
 
                     var sdpXml = self.theSession.createXMLNode(self.xmlSdp);
 
-                    if (self.isSdpText === false) {
+                    if (self.isSdpText == false) {
                         var docXML = (new DOMParser()).parseFromString("<root/>", "text/xml");
                         sdpXml = SDPXML.parseText(self.currentCalls[callid]['pc'].localDescription.sdp, docXML);
 
@@ -1380,7 +1386,7 @@ function XimssSession() {
 
         doUpdateRequestAccept: function (callid, requestType) {
 
-            if (this.currentCalls[callid]['pc'] !== null) {
+            if (this.currentCalls[callid]['pc'] != null) {
                 this.unsubscribePC(this.currentCalls[callid]['pc']);
                 this.currentCalls[callid]['pc'].close();
                 this.currentCalls[callid]['pc'] = null;
@@ -1397,6 +1403,8 @@ function XimssSession() {
                 if (self.currentCalls[callid]['pc'] !== null)
                     if (DEBUG_SIPNET === true)
                         console.log('onicegatheringstatechange: ' + self.currentCalls[callid]['pc'].iceGatheringState);
+
+
 
                 //после сбора ICE запускаем и обнуляем таймер если он не отработал раньше
                 if (self.currentCalls[callid]['pc'].iceGatheringState === "complete") {
@@ -1416,13 +1424,18 @@ function XimssSession() {
 
             this.currentCalls[callid]['pc'].onicecandidate = function (event) {
                 if (!event.candidate) {
+
                 }
             };
 
 
             this.currentCalls[callid]['pc'].onaddstream = function (event) {
+
+
                 var e = document.getElementById('audioElem_' + callid);
+
                 e.srcObject = event.stream;
+
             };
 
 
@@ -1432,7 +1445,7 @@ function XimssSession() {
 
             var compare = this.versionCompare(this.CGPversion, '6.2.0');
 
-            if (self.isSdpText === false && compare > 0) {
+            if (self.isSdpText == false && compare > 0) {
                 desc = (new RTCSessionDescription({
                     type: requestType,
                     sdp: this.currentCalls[callid]['remoteSDP']
@@ -1444,7 +1457,7 @@ function XimssSession() {
                 }));
             }
 
-            if (DEBUG_SIPNET === true) console.log("doUpdateRequestAccept(): \ndesc.sdp:\n" + desc.sdp + "desc:", desc);
+            if (DEBUG_SIPNET == true) console.log("doUpdateRequestAccept(): \ndesc.sdp:\n" + desc.sdp + "desc:", desc);
 
             this.currentCalls[callid]['pc'].setRemoteDescription(desc,
                 function () {
@@ -1461,17 +1474,19 @@ function XimssSession() {
                                             self.callUpdateAccept();
                                         }
                                     }, 1000);
+
+
                                 },
 
                                 function (errObj) {
-                                    if (DEBUG_SIPNET === true) console.log("UnSuccess setLocalDescription");
+                                    if (DEBUG_SIPNET == true) console.log("UnSuccess setLocalDescription");
                                     this.ximssErr('Error create local SDP:' + JSON.stringify(errObj, null, ' '));
                                 }
                             );
                         },
 
                         function (err) {
-                            if (DEBUG_SIPNET === true) console.log("createNaswer_error():", err);
+                            if (DEBUG_SIPNET == true) console.log("createNaswer_error():", err);
                         },
                         {}
                     );
@@ -1479,20 +1494,20 @@ function XimssSession() {
                 },
 
                 function (errObj) {
-                    if (DEBUG_SIPNET === true) console.log("UnSuccess setRemoteDescription");
+                    if (DEBUG_SIPNET == true) console.log("UnSuccess setRemoteDescription");
                     self.doCallUpdateReject(callid, '488');
                 }
             );
 
             this.callUpdateAccept=()=> {
-                if (self.theSession !== null) {
+                if (self.theSession != null) {
                     var callUpdateAccept = self.theSession.createXMLNode("callUpdateAccept");
                     callUpdateAccept.setAttribute("callLeg", self.currentCalls[callid]['callLeg']);
                     callUpdateAccept.setAttribute("media", "WebRTC");
                     var sdpXml = self.theSession.createXMLNode(self.xmlSdp);
 
 
-                    if (self.isSdpText === false) {
+                    if (self.isSdpText == false) {
                         var docXML = (new DOMParser()).parseFromString("<root/>", "text/xml");
                         sdpXml = SDPXML.parseText(self.currentCalls[callid]['pc'].localDescription.sdp, docXML);
                         SDPXML.adjustWebRTCXML(sdpXml, null);
@@ -1508,6 +1523,9 @@ function XimssSession() {
         },
 
         fixIpV6SDP: function (srcSDP) {
+            //console.log('Before fix IPv6: '+srcSDP);
+            //srcSDP = srcSDP.replace(/a=candidate.*((?:[0-9A-Fa-f]{1,4}))((?::[0-9A-Fa-f]{1,4}))*::((?:[0-9A-Fa-f]{1,4}))((?::[0-9A-Fa-f]{1,4}))*|((?:[0-9A-Fa-f]{1,4}))((?::[0-9A-Fa-f]{1,4})){7}.*network-cost\s\d?/g, '');
+            //console.log('Fixed IPv6: '+srcSDP);
             return srcSDP;
         },
 
@@ -1519,13 +1537,25 @@ function XimssSession() {
 
             var compare = this.versionCompare(this.CGPversion, '16.2');
 
+            //if (compare < 0) {
+            //    if (DEBUG_SIPNET == true) console.log('current version is older than 6.2!');
+            //    srcSDP = srcSDP.replace(/c=IN\sIP4\s(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)/g, 'c=IN IP4 10.255.255.255');
+            //} else {
+            //    if (DEBUG_SIPNET == true) console.log('current version is 6.2 or higher!');
+            //}
+
             srcSDP = srcSDP.replace(/UDP\/TLS\/RTP\/SAVPF /g, 'RTP/SAVPF ');
+
+            //srcSDP = srcSDP.replace(/a=crypto.*\n/g, '');
+            ///(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))/gm
+
+
 
             var detectorInfo = null;
             try {
                 detectorInfo = detector;
             } catch (e) {
-                if (DEBUG_SIPNET === true) console.log("No detector found!");
+                if (DEBUG_SIPNET == true) console.log("No detector found!");
             }
 
             if (detectorInfo !== null) {
@@ -1543,7 +1573,7 @@ function XimssSession() {
             try {
                 detectorInfo = detector;
             } catch (e) {
-                if (DEBUG_SIPNET === true) console.log("No detector found!");
+                if (DEBUG_SIPNET == true) console.log("No detector found!");
             }
 
             if (detectorInfo !== null) {
@@ -1560,15 +1590,15 @@ function XimssSession() {
             var compare = this.versionCompare(this.CGPversion, '16.2');
 
             if (compare < 0) {
-                if (DEBUG_SIPNET === true) console.log('current version is older than 6.2!');
+                if (DEBUG_SIPNET == true) console.log('current version is older than 6.2!');
 
                 var j, i = srcSDP.indexOf('a=');
                 var ip_, port_;
                 while (i >= 0) {
-                    if (srcSDP.charAt(i - 1) !== '\n') srcSDP = srcSDP.substring(0, i) + '\n' + srcSDP.substring(i);
+                    if (srcSDP.charAt(i - 1) != '\n') srcSDP = srcSDP.substring(0, i) + '\n' + srcSDP.substring(i);
                     i = srcSDP.indexOf('a=', i + 3);
                 }
-                if (srcSDP.charAt(srcSDP.length - 1) !== '\n') srcSDP += '\n';
+                if (srcSDP.charAt(srcSDP.length - 1) != '\n') srcSDP += '\n';
 
                 if (srcSDP.indexOf('c=IN IP6 ') > -1) {
                     i = srcSDP.indexOf('c=IN IP6 ') + 9;
@@ -1585,7 +1615,7 @@ function XimssSession() {
                 port_ = srcSDP.substring(i, j);
 
                 var z = srcSDP.indexOf('m=video');
-                if (z !== -1) {
+                if (z != -1) {
                     i = srcSDP.indexOf('m=video ') + 8;
                     j = srcSDP.indexOf(' ', i);
                     var port_v = srcSDP.substring(i, j);
@@ -1598,9 +1628,11 @@ function XimssSession() {
 
 
             } else {
-                if (DEBUG_SIPNET === true) console.log('current version is 6.2 or higher!');
+                if (DEBUG_SIPNET == true) console.log('current version is 6.2 or higher!');
             }
 
+//            srcSDP = srcSDP.replace(/m=audio /, 'a=group:BUNDLE audio\nm=audio ');
+//            srcSDP = srcSDP.replace(/a=setup:actpass/, 'a=setup:actpass\na=mid:audio');
 
             srcSDP = srcSDP.replace(/RTP\/SAVPF /g, 'UDP/TLS/RTP/SAVPF ');
             srcSDP = srcSDP.replace(/RTP\/SAVP /g, 'UDP/TLS/RTP/SAVPF ');
@@ -1620,15 +1652,15 @@ function XimssSession() {
             var compare = this.versionCompare(this.CGPversion, '16.2');
 
             if (compare < 0) {
-                if (DEBUG_SIPNET === true) console.log('current version is older than 6.2!');
+                if (DEBUG_SIPNET == true) console.log('current version is older than 6.2!');
 
                 var j, i = srcSDP.indexOf('a=');
                 var ip_, port_;
                 while (i >= 0) {
-                    if (srcSDP.charAt(i - 1) !== '\n') srcSDP = srcSDP.substring(0, i) + '\n' + srcSDP.substring(i);
+                    if (srcSDP.charAt(i - 1) != '\n') srcSDP = srcSDP.substring(0, i) + '\n' + srcSDP.substring(i);
                     i = srcSDP.indexOf('a=', i + 3);
                 }
-                if (srcSDP.charAt(srcSDP.length - 1) !== '\n') srcSDP += '\n';
+                if (srcSDP.charAt(srcSDP.length - 1) != '\n') srcSDP += '\n';
 
 
                 if (srcSDP.indexOf('c=IN IP6 ') > -1) {
@@ -1650,7 +1682,7 @@ function XimssSession() {
                 j = srcSDP.indexOf(' ', i);
 
                 var z = srcSDP.indexOf('m=video');
-                if (z !== -1) {
+                if (z != -1) {
                     i = srcSDP.indexOf('m=video ') + 8;
                     j = srcSDP.indexOf(' ', i);
                     var port_v = srcSDP.substring(i, j);
@@ -1661,15 +1693,15 @@ function XimssSession() {
                     srcSDP += 'a=candidate:7777777 1 UDP 77 ' + ip_ + ' ' + port_ + ' typ host\n';
                 }
 
-                if (requestType === "offer") {
+                if (requestType == "offer") {
                     srcSDP = srcSDP.replace('a=setup:active', 'a=setup:actpass');
                 }
-                if (requestType === "answer") {
+                if (requestType == "answer") {
                     srcSDP = srcSDP.replace('a=setup:actpass', 'a=setup:active');
                 }
 
             } else {
-                if (DEBUG_SIPNET === true) console.log('current version is 6.2 or higher!');
+                if (DEBUG_SIPNET == true) console.log('current version is 6.2 or higher!');
             }
 
             srcSDP = srcSDP.replace(/a=crypto.*\n/g, '');
@@ -1736,22 +1768,22 @@ function XimssSession() {
                 e.srcObject = event.stream;
 
             };
-            if (DEBUG_SIPNET === true) console.log("remoteSDP=" + remoteSDP);
+            if (DEBUG_SIPNET == true) console.log("remoteSDP=" + remoteSDP);
 
             var desc = "";
-            if (this.isSdpText === true) {
+            if (this.isSdpText == true) {
                 desc = (new RTCSessionDescription({type: "answer", sdp: this.fixCGSDPStr(remoteSDP)}));
-                if (DEBUG_SIPNET === true) console.log("fixedSDP=" + desc.sdp);
+                if (DEBUG_SIPNET == true) console.log("fixedSDP=" + desc.sdp);
             } else {
                 desc = (new RTCSessionDescription({type: "answer", sdp: remoteSDP}));
             }
 
             this.currentCalls[callid]['pc'].setRemoteDescription(desc,
                 function () {
-                    if (DEBUG_SIPNET === true) console.log("Success setRemoteDescription");
+                    if (DEBUG_SIPNET == true) console.log("Success setRemoteDescription");
                 },
                 function (errObj) {
-                    if (DEBUG_SIPNET === true) console.log("UnSuccess setRemoteDescription");
+                    if (DEBUG_SIPNET == true) console.log("UnSuccess setRemoteDescription");
 
                 }
             );
@@ -1766,7 +1798,7 @@ function XimssSession() {
 
             this.checkDevices();
 
-            if (isWidget === true) this.widget = true;
+            if (isWidget == true) this.widget = true;
 
             if (isAdmin !== undefined && isAdmin === true) {
                 this.userStatus = 'admin';
@@ -1789,7 +1821,7 @@ function XimssSession() {
 
             this.isSdpText = false;
 
-            if (this.isSdpText === true) {
+            if (this.isSdpText == true) {
                 this.xmlSdp = "sdpText";
             } else {
                 this.xmlSdp = "sdp";
@@ -1826,16 +1858,16 @@ function XimssSession() {
                     var localVideo = document.getElementById('localVideo');
 
                     localVideo.srcObject = stream;
-                    if (DEBUG_SIPNET === true) console.log('Show local video');
+                    if (DEBUG_SIPNET == true) console.log('Show local video');
                 },
                 function (errObj) {
-                    if (DEBUG_SIPNET === true) console.log('Cant init local video:' + JSON.stringify(errObj, null, ' '));
+                    if (DEBUG_SIPNET == true) console.log('Cant init local video:' + JSON.stringify(errObj, null, ' '));
                 }
             );
         },
 
         hideLocalVideo: function () {
-            if (this.localVideoStream !== null) {
+            if (this.localVideoStream != null) {
                 if (this.localVideoStream.getAudioTracks()[0] !== undefined) this.localVideoStream.getAudioTracks()[0].stop();
                 if (this.localVideoStream.getVideoTracks()[0] !== undefined) this.localVideoStream.getVideoTracks()[0].stop();
                 this.localVideoStream = null;
@@ -1845,27 +1877,27 @@ function XimssSession() {
 
         doLogout: function (agent) {
 
-            if ((agent !== undefined && agent === true) || (this.userStatus === 'admin' && this.adminKey !== '')) {
+            if ((agent != undefined && agent == true) || (this.userStatus == 'admin' && this.adminKey != '')) {
 
-                if (this.hubTaskReferer !== null) {
+                if (this.hubTaskReferer != null) {
                     this.doXimssSendEvent(this.userStatus + '-bye', null, this.hubTaskReferer);
                 } else {
-                    if (this.conflict === false) {
-                        this.userStatus === 'admin' ? this.doXimssTaskDeactivateMeeting('pbx', this.adminKey) : this.doXimssTaskDeactivateMeeting('pbx', this.userStatus);
+                    if (this.conflict == false) {
+                        this.userStatus == 'admin' ? this.doXimssTaskDeactivateMeeting('pbx', this.adminKey) : this.doXimssTaskDeactivateMeeting('pbx', this.userStatus);
                     } else {
-                        if (DEBUG_SIPNET === true) console.log('doLogout if conflict==true');
+                        if (DEBUG_SIPNET == true) console.log('doLogout if conflict==true');
                         this.doCloseXimssSession();
                     }
                 }
             } else {
-                if (DEBUG_SIPNET === true) console.log('doLogout if agent==false');
+                if (DEBUG_SIPNET == true) console.log('doLogout if agent==false');
                 this.doCloseXimssSession();
             }
 
             var self = this;
             this.closeTimeout = setTimeout(function () {
-                if (self.theSession !== null) {
-                    if (DEBUG_SIPNET === true) console.log('doLogout if setTimeout 2000');
+                if (self.theSession != null) {
+                    if (DEBUG_SIPNET == true) console.log('doLogout if setTimeout 2000');
                     self.doForceCloseXimssSession();
                 }
             }, 2000);
@@ -1876,14 +1908,14 @@ function XimssSession() {
             sendIMRequest.setAttribute("peer", peer);
             sendIMRequest.setAttribute("type", type);
 
-            this.userStatus === 'admin' ?
+            this.userStatus == 'admin' ?
                 sendIMRequest.setAttribute("clientID", this.adminKey) :
                 sendIMRequest.setAttribute("clientID", this.userStatus);
 
 
-            if (msgText === "<composing/>") {
+            if (msgText == "<composing/>") {
                 sendIMRequest.appendChild(this.theSession.createXMLNode('composing'));
-            } else if (msgText === "<gone/>") {
+            } else if (msgText == "<gone/>") {
                 sendIMRequest.appendChild(this.theSession.createXMLNode('gone'));
             } else if (msgText) {
                 sendIMRequest.appendChild(this.theSession.createTextNode(msgText));
@@ -1897,10 +1929,10 @@ function XimssSession() {
             sendIMRequest.setAttribute("peer", peer);
             sendIMRequest.setAttribute("type", type);
 
-            if (msgText === "<composing/>") {
+            if (msgText == "<composing/>") {
                 sendIMRequest.appendChild(this.theSession.createXMLNode('composing'));
                 this.doXimssFileWriteLastChat(peer);
-            } else if (msgText === "<gone/>") {
+            } else if (msgText == "<gone/>") {
                 sendIMRequest.appendChild(this.theSession.createXMLNode('gone'));
                 this.doXimssFileWriteLastChat(peer);
             } else if (msgText) {
@@ -1915,7 +1947,7 @@ function XimssSession() {
             var sendIMRequest = this.theSession.createXMLNode("sendIM");
             sendIMRequest.setAttribute("peer", peer);
             sendIMRequest.setAttribute("type", "chat");
-            this.userStatus === 'admin' ?
+            this.userStatus == 'admin' ?
                 sendIMRequest.setAttribute("clientID", this.adminKey) :
                 sendIMRequest.setAttribute("clientID", this.userStatus);
 
@@ -1928,7 +1960,7 @@ function XimssSession() {
             var sendIMRequest = this.theSession.createXMLNode("sendIM");
             sendIMRequest.setAttribute("peer", peer);
             sendIMRequest.setAttribute("type", "chat");
-            this.userStatus === 'admin' ?
+            this.userStatus == 'admin' ?
                 sendIMRequest.setAttribute("clientID", this.adminKey) :
                 sendIMRequest.setAttribute("clientID", this.userStatus);
             sendIMRequest.appendChild(this.theSession.createTextNode('Вам отправлена CRM-ссылка ' + link + '. Используйте рабочее место оператора ВАТС для работы CRM-ссылками.'));
@@ -1941,7 +1973,7 @@ function XimssSession() {
 
             earlyMedia = false;
             if (!this.logined) {
-                if (DEBUG_SIPNET === true) console.log("User not logined to server");
+                if (DEBUG_SIPNET == true) console.log("User not logined to server");
                 return;
             }
 
@@ -1950,9 +1982,9 @@ function XimssSession() {
             if (this.currentCalls === undefined) this.currentCalls = new Array();
             if (this.currentCalls[callid] === undefined) this.currentCalls[callid] = new Array();
             this.currentCalls[callid]['peer'] = peer;
-            if (DEBUG_SIPNET === true) console.log("Session started: " + callid);
+            if (DEBUG_SIPNET == true) console.log("Session started: " + callid);
 
-            this.isVideo = ifVideo === true;
+            this.isVideo = ifVideo == true;
 
 
             this.initRTC(callid, audioIn);
@@ -1966,7 +1998,7 @@ function XimssSession() {
 
             this.currentCalls[callid]['isHold'] = true;
 
-            if (this.currentCalls[callid]['pc'] !== null) {
+            if (this.currentCalls[callid]['pc'] != null) {
                 this.unsubscribePC(this.currentCalls[callid]['pc']);
                 this.currentCalls[callid]['pc'].close();
                 this.currentCalls[callid]['pc'] = null;
@@ -1977,6 +2009,9 @@ function XimssSession() {
 
             var self = this;
 
+
+
+
             this.currentCalls[callid]['pc'].onicegatheringstatechange = function () {
 
                 if (self.currentCalls[callid] === undefined || self.currentCalls === undefined) return;
@@ -1984,6 +2019,7 @@ function XimssSession() {
                 if (self.currentCalls[callid]['pc'] !== null)
                     if (DEBUG_SIPNET === true)
                         console.log('onicegatheringstatechange: ' + self.currentCalls[callid]['pc'].iceGatheringState);
+
 
 
                 //после сбора ICE запускаем и обнуляем таймер если он не отработал раньше
@@ -2014,7 +2050,7 @@ function XimssSession() {
                 function (desc) {
                     self.currentCalls[callid]['pc'].setLocalDescription(desc,
                         function () {
-                            if (DEBUG_SIPNET === true) console.log("Success setLocalDescription33333");
+                            if (DEBUG_SIPNET == true) console.log("Success setLocalDescription33333");
 
                             self.holdTimer=setTimeout(function(){
                                 if (self.holdTimer!==null) {
@@ -2027,28 +2063,28 @@ function XimssSession() {
 
                         },
                         function (errObj) {
-                            if (DEBUG_SIPNET === true) console.log("UnSuccess setLocalDescription");
+                            if (DEBUG_SIPNET == true) console.log("UnSuccess setLocalDescription");
                             self.ximssErr('Error create local SDP:' + JSON.stringify(errObj, null, ' '));
                         }
                     );
                 },
 
                 function (err) {
-                    if (DEBUG_SIPNET === true) console.log("createOffer_error():", err);
+                    if (DEBUG_SIPNET == true) console.log("createOffer_error():", err);
                 },
                 offerOptions
             );
 
             this.Hold=()=> {
                 if (self.theSession !== null) {
-                    if (DEBUG_SIPNET === true) console.log('Local SDP complete:' + self.currentCalls[callid]['pc'].localDescription.sdp);
+                    if (DEBUG_SIPNET == true) console.log('Local SDP complete:' + self.currentCalls[callid]['pc'].localDescription.sdp);
                     var startCallRequest = self.theSession.createXMLNode("callUpdate");
                     startCallRequest.setAttribute("callLeg", self.currentCalls[callid]['callLeg']);
                     startCallRequest.setAttribute("media", "WebRTC");
                     var sdpXml = self.theSession.createXMLNode(self.xmlSdp);
 
 
-                    if (self.isSdpText === false) {
+                    if (self.isSdpText == false) {
                         var docXML = (new DOMParser()).parseFromString("<root/>", "text/xml");
                         sdpXml = SDPXML.parseText(self.currentCalls[callid]['pc'].localDescription.sdp, docXML);
                         SDPXML.adjustWebRTCXML(sdpXml, null);
@@ -2074,7 +2110,7 @@ function XimssSession() {
 
             this.currentCalls[callid]['isHold'] = false;
 
-            if (this.currentCalls[callid]['pc'] !== null) {
+            if (this.currentCalls[callid]['pc'] != null) {
                 this.unsubscribePC(this.currentCalls[callid]['pc']);
                 this.currentCalls[callid]['pc'].close();
                 this.currentCalls[callid]['pc'] = null;
@@ -2091,6 +2127,8 @@ function XimssSession() {
                 if (self.currentCalls[callid]['pc'] !== null)
                     if (DEBUG_SIPNET === true)
                         console.log('onicegatheringstatechange: ' + self.currentCalls[callid]['pc'].iceGatheringState);
+
+
 
                 //после сбора ICE запускаем и обнуляем таймер если он не отработал раньше
                 if (self.currentCalls[callid]['pc'].iceGatheringState === "complete") {
@@ -2129,13 +2167,13 @@ function XimssSession() {
                             }, 1000);
                         },
                         function (errObj) {
-                            if (DEBUG_SIPNET === true) console.log("UnSuccess setLocalDescription");
+                            if (DEBUG_SIPNET == true) console.log("UnSuccess setLocalDescription");
                             self.ximssErr('Error create local SDP:' + JSON.stringify(errObj, null, ' '));
                         }
                     );
                 },
                 function (err) {
-                    if (DEBUG_SIPNET === true) console.log("createOffer_error():", err);
+                    if (DEBUG_SIPNET == true) console.log("createOffer_error():", err);
                 },
                 {}
             );
@@ -2150,7 +2188,7 @@ function XimssSession() {
                     var sdpXml = self.theSession.createXMLNode(self.xmlSdp);
 
 
-                    if (self.isSdpText === false) {
+                    if (self.isSdpText == false) {
                         var docXML = (new DOMParser()).parseFromString("<root/>", "text/xml");
                         sdpXml = SDPXML.parseText(self.currentCalls[callid]['pc'].localDescription.sdp, docXML);
                         SDPXML.adjustWebRTCXML(sdpXml, null);
@@ -2162,7 +2200,7 @@ function XimssSession() {
 
                     startCallRequest.appendChild(sdpXml);
                     self.theSession.sendRequest(startCallRequest, ximssSession, self.ximssDataCallback, self.ximssOpCompleted, true);
-                    if (self.currentCalls[callid]['isMute'] === undefined || self.currentCalls[callid]['isMute'] === false) {
+                    if (self.currentCalls[callid]['isMute'] === undefined || self.currentCalls[callid]['isMute'] == false) {
                         self.currentCalls[callid]['localStream'].getAudioTracks()[0].enabled = true;
                         if (self.currentCalls[callid]['localStream'].getVideoTracks()[0] !== undefined)
                             self.currentCalls[callid]['localStream'].getVideoTracks()[0].enabled = true;
@@ -2174,7 +2212,7 @@ function XimssSession() {
 
         doUpdate: function (callid, audioIn, ifVideo) {
 
-            if (DEBUG_SIPNET === true) console.log("Update with device: " + audioIn);
+            if (DEBUG_SIPNET == true) console.log("Update with device: " + audioIn);
 
             var self = this;
 
@@ -2182,26 +2220,26 @@ function XimssSession() {
                 return;
             } else if (this.currentCalls[callid]['pc'] === undefined) {
                 return;
-            } else if (this.currentCalls[callid]['pc'].signalingState !== 'stable') {
+            } else if (this.currentCalls[callid]['pc'].signalingState != 'stable') {
                 return;
             }
 
-            if (ifVideo !== undefined && ifVideo === true) {
+            if (ifVideo != undefined && ifVideo == true) {
                 this.isVideo = true;
             }
 
 
-            if (this.ifFirefox === true) {
+            if (this.ifFirefox == true) {
 
 
-                if (this.currentCalls[callid]['pc'].signalingState === 'stable') {
+                if (this.currentCalls[callid]['pc'].signalingState == 'stable') {
 
 
                     this.currentCalls[callid]['pc'].getSenders().forEach(function (sender) {
                         self.currentCalls[callid]['localStream'].getTracks().forEach(function (track) {
                             if (sender.track === track) {
                                 self.currentCalls[callid]['pc'].removeTrack(sender);
-                                if (DEBUG_SIPNET === true) console.log('removeTrack');
+                                if (DEBUG_SIPNET == true) console.log('removeTrack');
                             }
                         });
                     });
@@ -2214,19 +2252,19 @@ function XimssSession() {
 
             this.currentCalls[callid]['localStream'] = null;
 
-            if (this.currentCalls[callid]['pc'] !== null) {
+            if (this.currentCalls[callid]['pc'] != null) {
                 this.unsubscribePC(this.currentCalls[callid]['pc']);
                 this.currentCalls[callid]['pc'].close();
                 this.currentCalls[callid]['pc'] = null;
             }
 
             this.audioIn = audioIn;
-            if (DEBUG_SIPNET === true) console.log("change device to: ", this.audioIn);
+            if (DEBUG_SIPNET == true) console.log("change device to: ", this.audioIn);
 
             navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 
 
-            if (!this.videoDevices || !this.videoDevices.length || this.userStatus === 'admin') {
+            if (!this.videoDevices || !this.videoDevices.length || this.userStatus == 'admin') {
                 this.isVideo = false;
             }
 
@@ -2263,11 +2301,12 @@ function XimssSession() {
 
                 }
             );
+
         },
 
 
         doMute: function (callid) {
-            if (DEBUG_SIPNET === true) console.log("Mute line: " + callid);
+            if (DEBUG_SIPNET == true) console.log("Mute line: " + callid);
             if (this.currentCalls === undefined) return;
             if (this.currentCalls[callid] === undefined) return;
             if (this.currentCalls[callid]['localStream'] === undefined) return;
@@ -2279,7 +2318,7 @@ function XimssSession() {
         },
 
         doUnmute: function (callid) {
-            if (DEBUG_SIPNET === true) console.log("Unmute line: " + callid);
+            if (DEBUG_SIPNET == true) console.log("Unmute line: " + callid);
             if (this.currentCalls === undefined) return;
             if (this.currentCalls[callid] === undefined) return;
             if (this.currentCalls[callid]['localStream'] === undefined) return;
@@ -2293,18 +2332,18 @@ function XimssSession() {
 
             if (this.currentCalls === undefined) return;
             if (this.currentCalls[callid] === undefined) return;
-            if (this.currentCalls[callid]['pc'] !== null) {
+            if (this.currentCalls[callid]['pc'] != null) {
 
                 var senders = this.currentCalls[callid]['pc'].getSenders();
                 var audioSender = senders.find(function (sender) {
                     return sender.track && sender.track.kind === 'audio';
                 });
                 if (!audioSender) {
-                    if (DEBUG_SIPNET === true) console.log('No local audio track to send DTMF with');
+                    if (DEBUG_SIPNET == true) console.log('No local audio track to send DTMF with');
                     return;
                 }
                 if (!audioSender.dtmf) {
-                    if (DEBUG_SIPNET === true) console.log('DTMF is not support by this browser.');
+                    if (DEBUG_SIPNET == true) console.log('DTMF is not support by this browser.');
                     return;
                 }
                 this.currentCalls[callid]['dtmfSender'] = audioSender.dtmf;
@@ -2327,9 +2366,9 @@ function XimssSession() {
         },
 
         doCallUpdateAccept: function (callid) {
-            if (this.theSession !== null) {
-                if (this.currentCalls[callid] === null) return;
-                if (this.currentCalls[callid]['callLeg'] === null) return;
+            if (this.theSession != null) {
+                if (this.currentCalls[callid] == null) return;
+                if (this.currentCalls[callid]['callLeg'] == null) return;
                 var startUpdAccRequest = this.theSession.createXMLNode("callUpdateAccept");
                 startUpdAccRequest.setAttribute("callLeg", this.currentCalls[callid]['callLeg']);
                 this.theSession.sendRequest(startUpdAccRequest, this, this.ximssDataCallback, this.ximssOpCompleted, true);
@@ -2338,7 +2377,7 @@ function XimssSession() {
 
 
         ximssCallSendDTMF: function (tone, callid) {
-            if (this.theSession !== null) {
+            if (this.theSession != null) {
                 var callSendDTMF = this.theSession.createXMLNode("callSendDTMF");
                 callSendDTMF.setAttribute("callLeg", this.currentCalls[callid]['callLeg']);
                 callSendDTMF.appendChild(this.theSession.createTextNode(tone));
@@ -2347,7 +2386,7 @@ function XimssSession() {
         },
 
         ximssMakeCall: function (peer) {
-            if (this.theSession !== null) {
+            if (this.theSession != null) {
                 var makeCall = this.theSession.createXMLNode("makeCall");
                 makeCall.setAttribute("peer", peer);
                 this.theSession.sendRequest(makeCall, ximssSession, this.ximssDataCallback, this.ximssOpCompleted, true);
@@ -2355,16 +2394,16 @@ function XimssSession() {
         },
 
         ximssTransferCall: function (peer, from, to) {
-            if (this.theSession !== null && from !== '') {
+            if (this.theSession != null && from != '') {
                 var transferCall = this.theSession.createXMLNode("callTransfer");
 
                 if (this.currentCalls[from] === undefined) return;
 
-                if (to !== '') {
+                if (to != '') {
                     if (this.currentCalls[to] === undefined) return;
                 }
                 transferCall.setAttribute("callLeg", this.currentCalls[from]['callLeg']);
-                if (to !== '') {
+                if (to != '') {
                     transferCall.setAttribute("otherLeg", this.currentCalls[to]['callLeg']);
                 } else
                     transferCall.setAttribute("peer", peer);
@@ -2374,7 +2413,7 @@ function XimssSession() {
 
 
         ximssRedirectCall: function (peer, callid) {
-            if (this.theSession !== null) {
+            if (this.theSession != null) {
                 var redirectCall = this.theSession.createXMLNode("callRedirect");
                 redirectCall.setAttribute("callLeg", this.currentCalls[callid]['callLeg']);
 
@@ -2387,7 +2426,7 @@ function XimssSession() {
         },
 
         doCallUpdateReject: function (callid, code) {
-            if (this.theSession !== null) {
+            if (this.theSession != null) {
                 var callUpdateReject = this.theSession.createXMLNode("callUpdateReject");
                 callUpdateReject.setAttribute("callLeg", this.currentCalls[callid]['callLeg']);
                 callUpdateReject.setAttribute("signalCode", code);
@@ -2400,20 +2439,20 @@ function XimssSession() {
             deleteLocalKPV();
 
             if (this.currentCalls[callid] === undefined) return;
-            if (this.currentCalls[callid]['callLeg'] === "" || this.currentCalls[callid]['callLeg'] === undefined) return;
-            if (this.currentCalls[callid]['pc'] !== null) {
+            if (this.currentCalls[callid]['callLeg'] == "" || this.currentCalls[callid]['callLeg'] === undefined) return;
+            if (this.currentCalls[callid]['pc'] != null) {
 
                 var self = this;
 
-                if (this.ifFirefox === true) {
+                if (this.ifFirefox == true) {
 
-                    if (this.currentCalls[callid]['pc'].signalingState === 'stable') {
+                    if (this.currentCalls[callid]['pc'].signalingState == 'stable') {
 
                         this.currentCalls[callid]['pc'].getSenders().forEach(function (sender) {
                             self.currentCalls[callid]['localStream'].getTracks().forEach(function (track) {
                                 if (sender.track === track) {
                                     self.currentCalls[callid]['pc'].removeTrack(sender);
-                                    if (DEBUG_SIPNET === true) console.log('removeTrack');
+                                    if (DEBUG_SIPNET == true) console.log('removeTrack');
                                 }
                             });
                         });
@@ -2424,7 +2463,7 @@ function XimssSession() {
                 }
 
 
-                if (this.currentCalls[callid]['pc'] !== null) {
+                if (this.currentCalls[callid]['pc'] != null) {
                     this.unsubscribePC(this.currentCalls[callid]['pc']);
                     this.currentCalls[callid]['pc'].close();
                     this.currentCalls[callid]['pc'] = null;
@@ -2435,35 +2474,35 @@ function XimssSession() {
             try {
                 e.pause();
             } catch (e) {
-                if (DEBUG_SIPNET === true) console.log("No found audioElem!");
+                if (DEBUG_SIPNET == true) console.log("No found audioElem!");
             }
 
-            if (this.currentCalls[callid]['localStream'] !== null) {
+            if (this.currentCalls[callid]['localStream'] != null) {
                 this.currentCalls[callid]['localStream'].getAudioTracks()[0].stop();
                 if (this.currentCalls[callid]['localStream'].getVideoTracks()[0] !== undefined) this.currentCalls[callid]['localStream'].getVideoTracks()[0].stop();
             }
 
             this.currentCalls[callid]['dtmfSender'] = null;
 
-            if (this.theSession !== null) {
+            if (this.theSession != null) {
                 var startCallKillRequest = this.theSession.createXMLNode("callKill");
                 startCallKillRequest.setAttribute("callLeg", this.currentCalls[callid]['callLeg']);
                 this.theSession.sendRequest(startCallKillRequest, this, this.ximssDataCallback, this.ximssOpCompleted, true);
             }
 
             delete this.currentCalls[callid];
-            if (DEBUG_SIPNET === true) console.log("Session deleted: " + callid);
+            if (DEBUG_SIPNET == true) console.log("Session deleted: " + callid);
         },
 
         doRosterList: function () {
-            if (this.theSession !== null) {
+            if (this.theSession != null) {
                 var rosterSetRequest = this.theSession.createXMLNode("rosterList");
                 this.theSession.sendRequest(rosterSetRequest, this, this.ximssDataCallback, this.ximssOpCompleted, true);
             }
         },
 
         doPresenceSet: function (status) {
-            if (this.theSession !== null) {
+            if (this.theSession != null) {
                 var presenceSetRequest = this.theSession.createXMLNode("presenceSet");
 
                 var statusNode = this.theSession.createXMLNode('presence');
@@ -2477,7 +2516,7 @@ function XimssSession() {
 
 
         ximssLoginCompleted: function (session, errorCode) {
-            if (errorCode !== null) {
+            if (errorCode != null) {
                 if (this.onXimssErrorLogin) this.onXimssErrorLogin(errorCode);
                 return;
             }
@@ -2498,17 +2537,17 @@ function XimssSession() {
         },
 
         ximssSignalBind: function (isPresence, isVideo) {
-            if (DEBUG_SIPNET === true) console.log("start SignalBind");
+            if (DEBUG_SIPNET == true) console.log("start SignalBind");
             navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 
-            if (DEBUG_SIPNET === true) console.log(this.audioDevices);
-            if (DEBUG_SIPNET === true) console.log(this.videoDevices);
+            if (DEBUG_SIPNET == true) console.log(this.audioDevices);
+            if (DEBUG_SIPNET == true) console.log(this.videoDevices);
 
 
             var isVideo = true;
 
             if (this.videoDevices && this.videoDevices.length) {
-                this.userStatus === 'admin' ? isVideo = false : isVideo = true;
+                this.userStatus == 'admin' ? isVideo = false : isVideo = true;
             } else {
                 isVideo = false;
             }
@@ -2517,18 +2556,18 @@ function XimssSession() {
 
             navigator.getUserMedia({audio: true, video: isVideo},
                 function (stream) {
-                    if (self.theSession === null) {
+                    if (self.theSession == null) {
                         stream.getAudioTracks()[0].stop();
                         if (stream.getVideoTracks()[0] !== undefined)
                             stream.getVideoTracks()[0].stop();
-                        if (DEBUG_SIPNET === true) console.log('ximssSession is null');
+                        if (DEBUG_SIPNET == true) console.log('ximssSession is null');
                         return;
                     }
 
                     self.onUserMediaSuccess();
                     self.localStream = stream;
 
-                    if (self.pc !== null) {
+                    if (self.pc != null) {
                         self.pc.close();
                         self.pc = null;
                     }
@@ -2559,18 +2598,18 @@ function XimssSession() {
                                     }, 1000);
                                 },
                                 function (errObj) {
-                                    if (DEBUG_SIPNET === true) console.log("UnSuccess setLocalDescription");
+                                    if (DEBUG_SIPNET == true) console.log("UnSuccess setLocalDescription");
                                     self.ximssErr('Error create local SDP:' + JSON.stringify(errObj, null, ' '));
 
-                                    if (self.ifFirefox === true) {
+                                    if (self.ifFirefox == true) {
 
-                                        if (self.pc.signalingState === 'stable') {
+                                        if (self.pc.signalingState == 'stable') {
 
                                             self.pc.getSenders().forEach(function (sender) {
                                                 self.localStream.getTracks().forEach(function (track) {
                                                     if (sender.track === track) {
                                                         self.pc.removeTrack(sender);
-                                                        if (DEBUG_SIPNET === true) console.log('removeTrack');
+                                                        if (DEBUG_SIPNET == true) console.log('removeTrack');
                                                     }
                                                 });
                                             });
@@ -2579,7 +2618,7 @@ function XimssSession() {
                                         self.pc.removeStream(self.localStream);
                                     }
 
-                                    if (self.pc !== null) {
+                                    if (self.pc != null) {
                                         self.pc.close();
                                         self.pc = null;
                                         self.localStream.stop();
@@ -2589,24 +2628,24 @@ function XimssSession() {
                             );
                         },
                         function (err) {
-                            if (DEBUG_SIPNET === true) console.log("createOffer_error():", err);
+                            if (DEBUG_SIPNET == true) console.log("createOffer_error():", err);
                         },
                         {}
                     );
 
                     self.callSignalBind=()=>{
-                        if (self.theSession !== null) {
+                        if (self.theSession != null) {
                             var signalBindRequest = self.theSession.createXMLNode("signalBind");
 
-                            self.userStatus === 'admin' ?
+                            self.userStatus == 'admin' ?
                                 signalBindRequest.setAttribute("deviceName", self.adminKey) :
                                 signalBindRequest.setAttribute("deviceName", self.userStatus);
 
-                            self.userStatus === 'admin' ?
+                            self.userStatus == 'admin' ?
                                 signalBindRequest.setAttribute("clientID", self.adminKey) :
                                 signalBindRequest.setAttribute("clientID", self.userStatus);
 
-                            if (isPresence === false) {
+                            if (isPresence == false) {
                                 self.isPresence = false;
                             } else {
                                 self.isPresence = true;
@@ -2618,7 +2657,7 @@ function XimssSession() {
 
                             var sdpXml2 = self.theSession.createXMLNode(self.xmlSdp);
 
-                            if (self.isSdpText === false) {
+                            if (self.isSdpText == false) {
                                 var docXML = (new DOMParser()).parseFromString("<root/>", "text/xml");
                                 sdpXml2 = SDPXML.parseText(self.fixIpV6SDP(self.pc.localDescription.sdp), docXML);
                                 SDPXML.adjustWebRTCXML(sdpXml2, null);
@@ -2651,18 +2690,22 @@ function XimssSession() {
                     }
 
                     self.onUserMediaError(message);
-                    if (DEBUG_SIPNET === true) console.log('Error in getUserMedia: ' + message);
+                    if (DEBUG_SIPNET == true) console.log('Error in getUserMedia: ' + message);
 
                 }
             );
         },
 
 
+
+
+
+
         ximssSignalBindNoWebRTC: function (isPresence) {
-            if (DEBUG_SIPNET === true) console.log("start SignalBind without WebRTC");
+            if (DEBUG_SIPNET == true) console.log("start SignalBind without WebRTC");
             navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 
-            if (DEBUG_SIPNET === true) console.log(this.audioDevices);
+            if (DEBUG_SIPNET == true) console.log(this.audioDevices);
 
 
             var isVideo = false;
@@ -2672,28 +2715,28 @@ function XimssSession() {
             navigator.getUserMedia({audio: true, video: isVideo},
                 function (stream) {
 
-                    if (self.theSession === null) {
+                    if (self.theSession == null) {
                         stream.getAudioTracks()[0].stop();
                         if (stream.getVideoTracks()[0] !== undefined)
                             stream.getVideoTracks()[0].stop();
-                        if (DEBUG_SIPNET === true) console.log('ximssSession is null');
+                        if (DEBUG_SIPNET == true) console.log('ximssSession is null');
                         return;
                     }
 
                     self.onUserMediaSuccess();
 
-                    if (self.theSession !== null) {
+                    if (self.theSession != null) {
                         var signalBindRequest = self.theSession.createXMLNode("signalBind");
 
-                        self.userStatus === 'admin' ?
+                        self.userStatus == 'admin' ?
                             signalBindRequest.setAttribute("deviceName", self.adminKey) :
                             signalBindRequest.setAttribute("deviceName", self.userStatus);
 
-                        self.userStatus === 'admin' ?
+                        self.userStatus == 'admin' ?
                             signalBindRequest.setAttribute("clientID", self.adminKey) :
                             signalBindRequest.setAttribute("clientID", self.userStatus);
 
-                        if (isPresence === false) {
+                        if (isPresence == false) {
                             self.isPresence = false;
                         } else {
                             self.isPresence = true;
@@ -2730,7 +2773,7 @@ function XimssSession() {
                     }
 
                     self.onUserMediaError(message);
-                    if (DEBUG_SIPNET === true) console.log('Error in getUserMedia: ' + message);
+                    if (DEBUG_SIPNET == true) console.log('Error in getUserMedia: ' + message);
 
                 }
             );
@@ -2778,7 +2821,7 @@ function XimssSession() {
 
             var self = this;
 
-            if (DEBUG_SIPNET === true) console.log("Request: " + JSON.stringify(({
+            if (DEBUG_SIPNET == true) console.log("Request: " + JSON.stringify(({
                 'crm_user_id': crm_user_id, 'api_key': api_key
             })), null, 4);
 
@@ -2789,7 +2832,7 @@ function XimssSession() {
                     'crm_user_id': crm_user_id, 'api_key': api_key
                 }),
                 success: function (data) {
-                    if (DEBUG_SIPNET === true) console.log("Response: " + JSON.stringify(data, null, 4));
+                    if (DEBUG_SIPNET == true) console.log("Response: " + JSON.stringify(data, null, 4));
                     self.onGetSessionId(data);
                 }
             });
@@ -2798,14 +2841,14 @@ function XimssSession() {
 
         ximssSignalBindForDevice: function (isPresence) {
 
-            if (DEBUG_SIPNET === true) console.log("start SignalBindForDevice");
+            if (DEBUG_SIPNET == true) console.log("start SignalBindForDevice");
 
-            if (this.theSession !== null) {
+            if (this.theSession != null) {
 
                 var signalBindRequest = this.theSession.createXMLNode("signalBind");
                 var sdpXml2 = this.theSession.createXMLNode(this.xmlSdp);
 
-                if (isPresence !== null && isPresence === false) {
+                if (isPresence != null && isPresence == false) {
                     this.isPresence = false;
                 } else {
                     this.isPresence = true;
@@ -2821,8 +2864,8 @@ function XimssSession() {
         },
 
         ximssSignalUnbind: function () {
-            if (DEBUG_SIPNET === true) console.log("start SignalUnbind");
-            if (this.theSession !== null) {
+            if (DEBUG_SIPNET == true) console.log("start SignalUnbind");
+            if (this.theSession != null) {
                 var signalUnbindRequest = this.theSession.createXMLNode("signalUnbind");
                 this.theSession.sendRequest(signalUnbindRequest, this, null, this.ximssOpCompleted, true);
             }
@@ -2830,7 +2873,7 @@ function XimssSession() {
 
         ximssCallReject: function (callid) {
             if (this.currentCalls[callid] === undefined) return;
-            if (this.theSession !== null) {
+            if (this.theSession != null) {
                 var callRejectResponse = this.theSession.createXMLNode("callReject");
                 callRejectResponse.setAttribute("callLeg", this.currentCalls[callid]['callLeg']);
                 callRejectResponse.setAttribute("signalCode", '486');
@@ -2841,7 +2884,7 @@ function XimssSession() {
 
 
         doXimssFindTaskMeeting: function (meetingSet, meetingName) {
-            if (this.theSession !== null) {
+            if (this.theSession != null) {
                 var sendFindTaskMeetingRequest = this.theSession.createXMLNode("taskFindMeeting");
                 sendFindTaskMeetingRequest.setAttribute("meetingSet", meetingSet);
                 sendFindTaskMeetingRequest.setAttribute("meetingName", meetingName);
@@ -2851,7 +2894,7 @@ function XimssSession() {
 
 
         doXimssTaskCreateMeeting: function (meetingSet, meetingName) {
-            if (this.theSession !== null) {
+            if (this.theSession != null) {
                 var sendTaskCreateMeetingRequest = this.theSession.createXMLNode("taskCreateMeeting");
                 sendTaskCreateMeetingRequest.setAttribute("meetingSet", meetingSet);
                 sendTaskCreateMeetingRequest.setAttribute("meetingName", meetingName);
@@ -2860,7 +2903,7 @@ function XimssSession() {
         },
 
         doXimssTaskActivateMeeting: function (meetingSet, meetingName) {
-            if (this.theSession !== null) {
+            if (this.theSession != null) {
                 var sendTaskActivateMeetingRequest = this.theSession.createXMLNode("taskActivateMeeting");
                 sendTaskActivateMeetingRequest.setAttribute("meetingSet", meetingSet);
                 sendTaskActivateMeetingRequest.setAttribute("meetingName", meetingName);
@@ -2870,7 +2913,7 @@ function XimssSession() {
 
 
         doXimssTaskDeactivateMeeting: function (meetingSet, meetingName) {
-            if (this.theSession !== null) {
+            if (this.theSession != null) {
                 var sendTaskDeactivateMeetingRequest = this.theSession.createXMLNode("taskDeactivateMeeting");
                 sendTaskDeactivateMeetingRequest.setAttribute("meetingSet", meetingSet);
                 sendTaskDeactivateMeetingRequest.setAttribute("meetingName", meetingName);
@@ -2879,7 +2922,7 @@ function XimssSession() {
         },
 
         doXimssTaskClearMeeting: function (meetingSet, meetingName) {
-            if (this.theSession !== null) {
+            if (this.theSession != null) {
                 var sendTaskClearMeetingRequest = this.theSession.createXMLNode("taskClearMeeting");
                 sendTaskClearMeetingRequest.setAttribute("meetingSet", meetingSet);
                 sendTaskClearMeetingRequest.setAttribute("meetingName", meetingName);
@@ -2888,7 +2931,7 @@ function XimssSession() {
         },
 
         doXimssTaskRemoveMeeting: function (meetingSet, meetingName) {
-            if (this.theSession !== null) {
+            if (this.theSession != null) {
                 var sendTaskRemoveMeetingRequest = this.theSession.createXMLNode("taskRemoveMeeting");
                 sendTaskRemoveMeetingRequest.setAttribute("meetingSet", meetingSet);
                 sendTaskRemoveMeetingRequest.setAttribute("meetingName", meetingName);
@@ -2901,7 +2944,7 @@ function XimssSession() {
             var sendTaskStartRequest = this.theSession.createXMLNode("taskStart");
             sendTaskStartRequest.setAttribute("programName", programName);
 
-            if (param !== '') {
+            if (param != '') {
                 var paramNode = this.theSession.createXMLNode("param");
                 paramNode.appendChild(this.theSession.createTextNode(param));
                 sendTaskStartRequest.appendChild(paramNode);
@@ -2912,7 +2955,7 @@ function XimssSession() {
 
 
         doXimssPasswordModify: function (password, email) {
-            if (this.theSession !== null) {
+            if (this.theSession != null) {
                 var sendPasswordModifyRequest = this.theSession.createXMLNode("passwordModify");
                 sendPasswordModifyRequest.setAttribute("oldPassword", password);
                 sendPasswordModifyRequest.setAttribute("recoveryEmail", email);
@@ -2946,24 +2989,24 @@ function XimssSession() {
         },
 
         doXimssSendEvent: function (eventName, body, taskRef) {
-            if (this.theSession !== null) {
+            if (this.theSession != null) {
                 var sendTaskSendEventRequest = this.theSession.createXMLNode("taskSendEvent");
                 sendTaskSendEventRequest.setAttribute("eventName", eventName);
-                if (taskRef !== null)
+                if (taskRef != null)
                     sendTaskSendEventRequest.setAttribute("taskRef", taskRef);
-                if (body !== null)
+                if (body != null)
                     sendTaskSendEventRequest.appendChild(this.theSession.createTextNode(body));
                 this.theSession.sendRequest(sendTaskSendEventRequest, this, this.ximssDataCallback, this.ximssOpCompleted, true);
             }
         },
 
         doXimssSendEventXml: function (eventName, xmlBody, taskRef) {
-            if (this.theSession !== null) {
+            if (this.theSession != null) {
                 var sendTaskSendEventRequest = this.theSession.createXMLNode("taskSendEvent");
                 sendTaskSendEventRequest.setAttribute("eventName", eventName);
-                if (taskRef !== null)
+                if (taskRef != null)
                     sendTaskSendEventRequest.setAttribute("taskRef", taskRef);
-                if (xmlBody !== null) {
+                if (xmlBody != null) {
                     var xmlNodeBody = this.str2xml(xmlBody);
                     sendTaskSendEventRequest.appendChild(xmlNodeBody);
                 }
@@ -2974,7 +3017,7 @@ function XimssSession() {
 
 
         doXimssContactFind: function (peer) {
-            if (this.theSession !== null) {
+            if (this.theSession != null) {
                 var sendContactFind = this.theSession.createXMLNode("contactFind");
                 sendContactFind.setAttribute("folder", "imVCardQueueFolder");
                 sendContactFind.setAttribute("peer", peer);
@@ -2985,7 +3028,7 @@ function XimssSession() {
 
 
         doXimssIqSend: function (peer) {
-            if (this.theSession !== null) {
+            if (this.theSession != null) {
                 var iqSend = this.theSession.createXMLNode("iqSend");
                 iqSend.setAttribute("type", "get");
                 iqSend.setAttribute("peer", peer);
@@ -3003,21 +3046,21 @@ function XimssSession() {
         },
 
         doXimssFolderOpen: function (mailbox, mailboxClass, folder, filter) {
-            if (this.theSession !== null) {
+            if (this.theSession != null) {
                 var sendFolderOpen = this.theSession.createXMLNode("folderOpen");
                 sendFolderOpen.setAttribute("folder", folder);
                 sendFolderOpen.setAttribute("mailbox", mailbox);
-                if (mailboxClass !== null) {
+                if (mailboxClass != null) {
                     sendFolderOpen.setAttribute("mailboxClass", mailboxClass);
                 }
-                if (filter !== null) {
+                if (filter != null) {
                     sendFolderOpen.setAttribute("filter", filter);
                     sendFolderOpen.setAttribute("filterField", "FLAGS");
                 }
                 sendFolderOpen.setAttribute("sortField", "Subject");
                 sendFolderOpen.setAttribute("sortOrder", "asc");
 
-                if (folder === "INBOX") {
+                if (folder == "INBOX") {
                     var field = this.theSession.createXMLNode('field');
                     field.appendChild(this.theSession.createTextNode("FLAGS"));
                     sendFolderOpen.appendChild(field);
@@ -3028,7 +3071,7 @@ function XimssSession() {
         },
 
         doXimssFolderClose: function (folder) {
-            if (this.theSession !== null) {
+            if (this.theSession != null) {
                 var sendFolderClose = this.theSession.createXMLNode("folderClose");
                 sendFolderClose.setAttribute("folder", folder);
                 this.theSession.sendRequest(sendFolderClose, this, this.ximssDataCallback, this.ximssOpCompleted, true);
@@ -3036,7 +3079,7 @@ function XimssSession() {
         },
 
         doXimssFolderBrowse: function (folder, from, till) {
-            if (this.theSession !== null) {
+            if (this.theSession != null) {
                 var sendFolderBrowse = this.theSession.createXMLNode("folderBrowse");
                 sendFolderBrowse.setAttribute("folder", folder);
                 var index = this.theSession.createXMLNode("index");
@@ -3048,7 +3091,7 @@ function XimssSession() {
         },
 
         doXimssFolderBrowseByUID: function (folder, uid) {
-            if (this.theSession !== null) {
+            if (this.theSession != null) {
                 var sendFolderBrowse = this.theSession.createXMLNode("folderBrowse");
                 sendFolderBrowse.setAttribute("folder", folder);
                 var uidNode = this.theSession.createXMLNode("uid");
@@ -3059,7 +3102,7 @@ function XimssSession() {
         },
 
         doXimssFolderRead: function (folder, uid) {
-            if (this.theSession !== null) {
+            if (this.theSession != null) {
                 var sendFolderRead = this.theSession.createXMLNode("folderRead");
                 sendFolderRead.setAttribute("folder", folder);
                 sendFolderRead.setAttribute("UID", uid);
@@ -3070,7 +3113,7 @@ function XimssSession() {
 
 
         doXimssFolderSync: function (folder) {
-            if (this.theSession !== null) {
+            if (this.theSession != null) {
                 var sendFolderSync = this.theSession.createXMLNode("folderSync");
                 sendFolderSync.setAttribute("folder", folder);
                 this.theSession.sendRequest(sendFolderSync, this, this.ximssDataCallback, this.ximssOpCompleted, true);
@@ -3079,7 +3122,7 @@ function XimssSession() {
 
 
         doXimssMailboxSubList: function (filter) {
-            if (this.theSession !== null) {
+            if (this.theSession != null) {
                 var sendMailboxSubList = this.theSession.createXMLNode("mailboxSubList");
                 sendMailboxSubList.setAttribute("filter", filter);
                 this.theSession.sendRequest(sendMailboxSubList, this, this.ximssDataCallback, this.ximssOpCompleted, true);
@@ -3087,7 +3130,7 @@ function XimssSession() {
         },
 
         doXimssMailboxRightsGet: function (mailbox) {
-            if (this.theSession !== null) {
+            if (this.theSession != null) {
                 var sendMailboxRightsGet = this.theSession.createXMLNode("mailboxRightsGet");
                 sendMailboxRightsGet.setAttribute("mailbox", mailbox);
                 this.theSession.sendRequest(sendMailboxRightsGet, this, this.ximssDataCallback, this.ximssOpCompleted, true);
@@ -3095,13 +3138,13 @@ function XimssSession() {
         },
 
         doXimssContactAppend: function (targetMailbox, folder, xmlVCard, UID) {
-            if (this.theSession !== null) {
+            if (this.theSession != null) {
                 var sendContactAppend = this.theSession.createXMLNode("contactAppend");
 
                 sendContactAppend.setAttribute("folder", folder);
                 sendContactAppend.setAttribute("targetMailbox", targetMailbox);
 
-                if (UID !== null) {
+                if (UID != null) {
                     sendContactAppend.setAttribute("report", "uid");
                     sendContactAppend.setAttribute("replacesUID", UID);
                     sendContactAppend.setAttribute("checkOld", "yes");
@@ -3113,7 +3156,7 @@ function XimssSession() {
         },
 
         doXimssContactRemove: function (folder, UID) {
-            if (this.theSession !== null) {
+            if (this.theSession != null) {
                 var sendContactRemove = this.theSession.createXMLNode("messageRemove");
                 sendContactRemove.setAttribute("folder", folder);
                 var xmlUID = this.theSession.createXMLNode('UID');
@@ -3125,7 +3168,7 @@ function XimssSession() {
 
 
         doXimssContactsImport: function (folder, uploadID) {
-            if (this.theSession !== null) {
+            if (this.theSession != null) {
                 var sendContactsImport = this.theSession.createXMLNode("contactsImport");
                 sendContactsImport.setAttribute("folder", folder);
                 sendContactsImport.setAttribute("uploadID", uploadID);
@@ -3134,14 +3177,14 @@ function XimssSession() {
         },
 
         doXimssPrefsRead: function () {
-            if (this.theSession !== null) {
+            if (this.theSession != null) {
                 var sendPrefsRead = this.theSession.createXMLNode("prefsRead");
                 this.theSession.sendRequest(sendPrefsRead, this, this.ximssDataCallback, this.ximssOpCompleted, true);
             }
         },
 
         doXimssPrefsReadCustom: function (pref) {
-            if (this.theSession !== null) {
+            if (this.theSession != null) {
                 var sendPrefsReadCustom = this.theSession.createXMLNode("prefsRead");
                 sendPrefsReadCustom.setAttribute("type", "custom");
                 var name = this.theSession.createXMLNode("name");
@@ -3152,7 +3195,7 @@ function XimssSession() {
         },
 
         doXimssPrefsStore: function (propXML) {
-            if (this.theSession !== null) {
+            if (this.theSession != null) {
                 var sendPrefsStore = this.theSession.createXMLNode("prefsStore");
                 sendPrefsStore.appendChild(this.str2xml(propXML));
                 this.theSession.sendRequest(sendPrefsStore, this, this.ximssDataCallback, this.ximssOpCompleted, true);
@@ -3160,7 +3203,7 @@ function XimssSession() {
         },
 
         doXimssSetOption: function (object, value) {
-            if (this.theSession !== null) {
+            if (this.theSession != null) {
                 var sendXimssSetOption = this.theSession.createXMLNode("setSessionOption");
                 sendXimssSetOption.setAttribute("name", object);
                 sendXimssSetOption.setAttribute("value", value);
@@ -3169,21 +3212,21 @@ function XimssSession() {
         },
 
         doXimssBannerRead: function (xmlData, type) {
-            if (this.theSession !== null) {
+            if (this.theSession != null) {
                 var sendBannerRead = this.str2xml(xmlData);
                 this.theSession.sendRequest(sendBannerRead, this, this.ximssDataCallback, this.ximssOpCompleted, true);
             }
         },
 
         doXimssRaw: function (xmlData) {
-            if (this.theSession !== null) {
+            if (this.theSession != null) {
                 var sendRow = this.str2xml(xmlData);
                 this.theSession.sendRequest(sendRow, this, this.ximssDataCallback, this.ximssOpCompleted, true);
             }
         },
 
         doXimssFileList: function (fileName) {
-            if (this.theSession !== null) {
+            if (this.theSession != null) {
                 var sendFileList = this.theSession.createXMLNode("fileList");
                 sendFileList.setAttribute("fileName", fileName);
                 this.theSession.sendRequest(sendFileList, this, this.ximssDataCallback, this.ximssOpCompleted, true);
@@ -3191,7 +3234,7 @@ function XimssSession() {
         },
 
         doXimssFileDirInfo: function (directory) {
-            if (this.theSession !== null) {
+            if (this.theSession != null) {
                 var sendFileDirInfo = this.theSession.createXMLNode("fileList");
                 sendFileDirInfo.setAttribute("directory", directory);
                 this.theSession.sendRequest(sendFileDirInfo, this, this.ximssDataCallback, this.ximssOpCompleted, true);
@@ -3199,7 +3242,7 @@ function XimssSession() {
         },
 
         doXimssFileRead: function (type, fileName, position, limit) {
-            if (this.theSession !== null) {
+            if (this.theSession != null) {
                 var sendFileRead = this.theSession.createXMLNode("fileRead");
 
                 if (type) sendFileRead.setAttribute("type", type);
@@ -3212,7 +3255,7 @@ function XimssSession() {
         },
 
         doXimssFileWrite: function (type, fileName, stringData) {
-            if (this.theSession !== null) {
+            if (this.theSession != null) {
                 var sendFileWrite = this.theSession.createXMLNode("fileWrite");
                 if (type) sendFileWrite.setAttribute("type", type);
                 sendFileWrite.setAttribute("fileName", fileName);
@@ -3222,7 +3265,7 @@ function XimssSession() {
         },
 
         doXimssFileWriteDelivery: function (peerId) {
-            if (this.theSession !== null) {
+            if (this.theSession != null) {
                 var sendFileWrite = this.theSession.createXMLNode("fileWrite");
                 sendFileWrite.setAttribute("fileName", 'private/IM/' + peerId + '.delivery.log');
 
@@ -3235,7 +3278,7 @@ function XimssSession() {
         },
 
         doXimssFileWriteLastChat: function (peerId) {
-            if (this.theSession !== null) {
+            if (this.theSession != null) {
                 var sendFileWrite = this.theSession.createXMLNode("fileWrite");
                 sendFileWrite.setAttribute("fileName", 'private/IM/' + peerId + '.lastchat.log');
 
@@ -3247,7 +3290,7 @@ function XimssSession() {
         },
 
         doXimssFileRemove: function (fileName) {
-            if (this.theSession !== null) {
+            if (this.theSession != null) {
                 var sendFileRemove = this.theSession.createXMLNode("fileRemove");
                 sendFileRemove.setAttribute("fileName", fileName);
                 this.theSession.sendRequest(sendFileRemove, this, this.ximssDataCallback, this.ximssOpCompleted, true);
@@ -3256,7 +3299,7 @@ function XimssSession() {
 
 
         doXimssMessageMark: function (flags, folder, UID) {
-            if (this.theSession !== null) {
+            if (this.theSession != null) {
                 var sendMessageMark = this.theSession.createXMLNode("messageMark");
                 sendMessageMark.setAttribute("folder", folder);
                 sendMessageMark.setAttribute("flags", flags);
@@ -3268,7 +3311,7 @@ function XimssSession() {
         },
 
         doXimssCli: function (cli) {
-            if (this.theSession !== null) {
+            if (this.theSession != null) {
                 var sendCli = this.theSession.createXMLNode("cliExecute");
                 sendCli.appendChild(this.theSession.createTextNode(cli));
                 this.theSession.sendRequest(sendCli, this, this.ximssDataCallback, this.ximssOpCompleted, true);
@@ -3277,64 +3320,64 @@ function XimssSession() {
 
         doCloseXimssSession: function () {
 
-            if (DEBUG_SIPNET === true) console.log('closing session...');
-            if (this.theSession !== null) {
+            if (DEBUG_SIPNET == true) console.log('closing session...');
+            if (this.theSession != null) {
                 this.theSession.close(ximssSession, this.finalCallback);
                 this.theSession = null;
                 this.logined = false;
             }
 
             for (var key in this.currentCalls) {
-                if (this.currentCalls[key]['pc'] !== null) {
+                if (this.currentCalls[key]['pc'] != null) {
                     this.unsubscribePC(this.currentCalls[key]['pc']);
                     this.currentCalls[key]['pc'].close();
                     this.currentCalls[key]['pc'] = null;
                 }
             }
 
-            if (this.pc !== null) {
-                if (this.pc.signalingState !== 'closed') {
+            if (this.pc != null) {
+                if (this.pc.signalingState != 'closed') {
                     this.pc.close();
                 }
                 this.pc = null;
             }
 
-            if (this.closeTimeout !== null) clearTimeout(this.closeTimeout);
+            if (this.closeTimeout != null) clearTimeout(this.closeTimeout);
 
         },
 
         doForceCloseXimssSession: function () {
 
-            if (DEBUG_SIPNET === true) console.log('closing session...');
-            if (this.theSession !== null) {
+            if (DEBUG_SIPNET == true) console.log('closing session...');
+            if (this.theSession != null) {
                 this.theSession.close(ximssSession, this.finalCallback);
                 this.theSession = null;
                 this.logined = false;
             }
 
             for (var key in this.currentCalls) {
-                if (this.currentCalls[key]['pc'] !== null) {
+                if (this.currentCalls[key]['pc'] != null) {
                     this.unsubscribePC(this.currentCalls[key]['pc']);
                     this.currentCalls[key]['pc'].close();
                     this.currentCalls[key]['pc'] = null;
                 }
             }
 
-            if (this.pc !== null) {
-                if (this.pc.signalingState !== 'closed') {
+            if (this.pc != null) {
+                if (this.pc.signalingState != 'closed') {
                     this.pc.close();
                 }
                 this.pc = null;
             }
 
-            if (this.closeTimeout !== null) clearTimeout(this.closeTimeout);
+            if (this.closeTimeout != null) clearTimeout(this.closeTimeout);
 
             this.onXimssForceClosed();
         },
 
 
         doMonitorCalls: function (callUUID, monType) {
-            if (this.theSession !== null) {
+            if (this.theSession != null) {
                 var sendTaskSendEventRequest = this.theSession.createXMLNode("taskSendEvent");
                 sendTaskSendEventRequest.setAttribute("eventName", "monitor");
                 sendTaskSendEventRequest.setAttribute("taskRef", this.hubTaskReferer);
@@ -3355,7 +3398,7 @@ function XimssSession() {
         },
 
         doSetClientName:function (name) {
-            if (this.theSession !== null) {
+            if (this.theSession != null) {
                 var sendSetClientName = this.theSession.createXMLNode("setClientName");
                 sendSetClientName.setAttribute("name", name);
                 this.theSession.sendRequest(sendSetClientName, this, this.ximssDataCallback, this.ximssOpCompleted, true);
@@ -3363,7 +3406,7 @@ function XimssSession() {
         },
 
         ximssAsyncAll: function (xmlData) {
-            if (this.theSession !== null) {
+            if (this.theSession != null) {
 
                 var logString = (new XMLSerializer()).serializeToString(xmlData);
 
@@ -3371,13 +3414,13 @@ function XimssSession() {
                 logString = logString.replace(new RegExp("<BINVAL>(.*)<\/BINVAL>", 'g'), '...');
                 logString = logString.replace(new RegExp("<base64>(.*)<\/base64>", 'g'), '...');
 
-                if (DEBUG_SIPNET === true) console.log("%cS: " + logString, "color:blue;");
+                if (DEBUG_SIPNET == true) console.log("%cS: " + logString, "color:blue;");
 
-                if (xmlData === null) return;
+                if (xmlData == null) return;
                 var tagName = xmlData.tagName.toLowerCase();
 
 
-                if (tagName === "rosteritem") {
+                if (tagName == "rosteritem") {
                     var peerName = xmlData.getAttribute('name');
                     var peer = xmlData.getAttribute('peer');
                     var subscription = xmlData.getAttribute('subscription');
@@ -3385,18 +3428,18 @@ function XimssSession() {
                     var groups = [];
 
                     for (var i = 0; i < xmlData.childNodes.length; ++i) {
-                        if (xmlData.childNodes[i].tagName === 'group') {
+                        if (xmlData.childNodes[i].tagName == 'group') {
                             groups.push(xmlData.childNodes[i].textContent);
                         }
                     }
 
-                    if (DEBUG_SIPNET === true) console.log('Peer: ' + peer + ' ' + subscription + ' ' + groups);
-                    if (peer !== null) {
+                    if (DEBUG_SIPNET == true) console.log('Peer: ' + peer + ' ' + subscription + ' ' + groups);
+                    if (peer != null) {
                         this.onXimssRosterItem(peerName, peer, groups, subscription);
                     }
                 }
 
-                if (tagName === "session") {
+                if (tagName == "session") {
                     this.urlID = xmlData.getAttribute('urlID');
                     this.CGPversion = xmlData.getAttribute('version');
                     this.onXimssSessionID(this.urlID);
@@ -3412,19 +3455,19 @@ function XimssSession() {
                     }
                 }
 
-                if (tagName === "taskevent") {
+                if (tagName == "taskevent") {
 
                     var eventName = xmlData.getAttribute('eventName');
 
-                    if (eventName === 'conflict') {
+                    if (eventName == 'conflict') {
                         this.conflict = true;
                         this.onConflict();
                     }
 
-                    if (eventName === 'rcall') {
+                    if (eventName == 'rcall') {
                         var strangerTaskRef = xmlData.getAttribute("taskRef");
 
-                        if (this.currentCalls !== null && Object.keys(this.currentCalls).length > 0) {
+                        if (this.currentCalls != null && Object.keys(this.currentCalls).length > 0) {
                             this.doXimssSendEvent('rcallbusy', null, strangerTaskRef);
                         } else {
                             this.onAutoCall(xmlData.textContent, 1);
@@ -3432,7 +3475,7 @@ function XimssSession() {
                         }
                     }
 
-                    if (eventName === 'display') {
+                    if (eventName == 'display') {
                         var groupName;
                         var realName;
                         var phone;
@@ -3440,33 +3483,33 @@ function XimssSession() {
                         for (var i = 0; i < xmlData.childNodes.length; ++i) {
                             var key = xmlData.childNodes[i].getAttribute('key');
                             var xmlKey = xmlData.childNodes[i];
-                            if (key === "@groupName") {
+                            if (key == "@groupName") {
                                 groupName = xmlKey.textContent;
                             }
-                            if (key === "@realName") {
+                            if (key == "@realName") {
                                 realName = xmlKey.textContent;
                             }
-                            if (key === "") {
+                            if (key == "") {
                                 phone = xmlKey.textContent;
                             }
                         }
-                        if (DEBUG_SIPNET === true) console.log("onDisplayEvent: " + realName + " " + groupName + " " + phone);
+                        if (DEBUG_SIPNET == true) console.log("onDisplayEvent: " + realName + " " + groupName + " " + phone);
                         this.onDisplayEvent(realName, groupName, phone);
                     }
 
 
-                    if (eventName === 'settings') {
+                    if (eventName == 'settings') {
                         for (var i = 0; i < xmlData.childNodes.length; ++i) {
                             var key = xmlData.childNodes[i].getAttribute('key');
                             var xmlKey = xmlData.childNodes[i];
-                            if (key === 'integration') {
-                                if (DEBUG_SIPNET === true) console.log(xmlKey.textContent);
+                            if (key == 'integration') {
+                                if (DEBUG_SIPNET == true) console.log(xmlKey.textContent);
                                 this.onIntegration(xmlKey.textContent);
                             }
                         }
                     }
 
-                    if (eventName === 'cg-card') {
+                    if (eventName == 'cg-card') {
 
                         var xmlDataStr = this.xml2str(xmlData);
 
@@ -3476,47 +3519,58 @@ function XimssSession() {
                         var xmlDataXml = this.str2xml(xmlDataStr);
 
                         this.onCgCardEvent(xmlDataXml);
-                        if (DEBUG_SIPNET === true) console.log("CG-Card: " + (new XMLSerializer()).serializeToString(xmlDataXml));
+                        if (DEBUG_SIPNET == true) console.log("CG-Card: " + (new XMLSerializer()).serializeToString(xmlDataXml));
                     }
 
-                    if (eventName === 'groupsinfo') {
+                    if (eventName == 'groupsinfo') {
                         this.hubTaskReferer = xmlData.getAttribute('taskRef');
                         this.onGroupsInfoEvent(xmlData);
-                        if (DEBUG_SIPNET === true) console.log("GroupsInfo: " + (new XMLSerializer()).serializeToString(xmlData));
+                        if (DEBUG_SIPNET == true) console.log("GroupsInfo: " + (new XMLSerializer()).serializeToString(xmlData));
                     }
 
-                    if (eventName === 'groupslist') {
+                    if (eventName == 'groupslist') {
                         this.hubTaskReferer = xmlData.getAttribute('taskRef');
                         this.onGroupsListEvent(xmlData);
-                        if (DEBUG_SIPNET === true) console.log("GroupsList: " + (new XMLSerializer()).serializeToString(xmlData));
+                        if (DEBUG_SIPNET == true) console.log("GroupsList: " + (new XMLSerializer()).serializeToString(xmlData));
                     }
 
-                    if (eventName === 'status') {
+                    if (eventName == 'status') {
                         this.onStatusEvent(xmlData);
-                        if (DEBUG_SIPNET === true) console.log("status: " + (new XMLSerializer()).serializeToString(xmlData));
+                        if (DEBUG_SIPNET == true) console.log("status: " + (new XMLSerializer()).serializeToString(xmlData));
                     }
 
-                    if (eventName === 'welcome') {
+                    if (eventName == 'welcome') {
                         this.hubTaskReferer = xmlData.getAttribute('taskRef');
 
                         var serverLink = xmlData.firstChild.nodeValue;
 
+                        /*
+                                                if (serverLink) {
+                                                    var arr_serverLink = serverLink.match(/https:\/\/(.*)/);
+                                                    if (arr_serverLink !== null) {
+                                                        serverLink = arr_serverLink[1];
+                                                        this.serverName = serverLink;
+                                                        this.theSession.setServerName(serverLink);
+                                                    }
+
+                                                }
+                        */
                         this.onWelcome();
                     }
 
-                    if (eventName === 'userslist') {
+                    if (eventName == 'userslist') {
                         this.onGroupsInfoEvent(xmlData);
                     }
 
-                    if (eventName === 'userinfo') {
+                    if (eventName == 'userinfo') {
                         this.onGroupsInfoEvent(xmlData);
                     }
 
-                    if (eventName === 'rcallstarted' || eventName === 'rcallbusy') {
+                    if (eventName == 'rcallstarted' || eventName == 'rcallbusy') {
                         this.onRcallEvent(eventName);
                     }
 
-                    if (eventName === 'crm-link') {
+                    if (eventName == 'crm-link') {
 
                         var linkString = xmlData.firstChild.nodeValue;
                         var origLink = xmlData.firstChild.nodeValue;
@@ -3524,29 +3578,61 @@ function XimssSession() {
                         linkString = linkString.replace('{login}', this.userName);
                         linkString = linkString.replace('{sessionid}', this.urlID);
 
-                        if (DEBUG_SIPNET === true) console.log("CRM-link: " + linkString);
+                        if (DEBUG_SIPNET == true) console.log("CRM-link: " + linkString);
                         this.onCrmLinkEvent(linkString, origLink);
                     }
 
-                    if (eventName === 'update_context') {
+                    if (eventName == 'update_context') {
                         this.onXimssUpdateContext();
                     }
 
-                    if (eventName === 'cgcardsearch' || eventName === 'delcgcard' || eventName === 'getcgcard' || eventName === 'cgcard' || eventName === 'cgcard-close') {
+                    if (eventName == 'cgcardsearch' || eventName == 'delcgcard' || eventName == 'getcgcard' || eventName == 'cgcard' || eventName == 'cgcard-close') {
                         this.onNewCGCard(xmlData);
                     }
 
-                }
+                    /*
+                     if (eventName == 'groupsupdate') {
+                     var groups = [];
 
-                if (tagName === "readim" && this.onXimssReadIM) {
+                     var xmlGroups = xmlResponse.firstChild;
+                     for (var z = 0; z < xmlGroups.childNodes.length; z++) {
+                     if (xmlGroups.childNodes[z].tagName == 'group') {
+                     groups.push({
+                     name: xmlGroups.childNodes[z].getAttribute('name'),
+                     allusers: xmlGroups.childNodes[z].getAttribute('allusers'),
+                     onlineusers: xmlGroups.childNodes[z].getAttribute('onlineusers')
+                     });
+                     }
+                     }
+                     this.onGroupsUpdate(groups);
+                     }
+                     */
+                }
+                /*
+                 if (tagName == "readim" && this.onXimssReadIM) {
+                 var peer = xmlData.getAttribute('peer'),
+                 peerName = xmlData.getAttribute('peerName'),
+                 iqid = xmlData.getAttribute('iqid'),
+                 type = xmlData.getAttribute('type'),
+                 msgTxt = xmlData.childNodes[0];
+                 if (msgTxt != null && msgTxt.nodeValue != null) {
+                 this.onXimssReadIM(peer, peerName, msgTxt.nodeValue);
+                 }else{
+                 if(iqid!=null && type=="chat"){
+                 this.onXimssReceiveCgCardId(peer, peerName, iqid);
+                 }
+                 }
+                 }
+                 */
+                if (tagName == "readim" && this.onXimssReadIM) {
                     var peer = xmlData.getAttribute('peer'),
                         peerName = xmlData.getAttribute('peerName'),
                         type = xmlData.getAttribute('type'),
                         body = xmlData.firstChild;
 
-                    if (DEBUG_SIPNET === true) console.log("readIM: " + (new XMLSerializer()).serializeToString(xmlData));
+                    if (DEBUG_SIPNET == true) console.log("readIM: " + (new XMLSerializer()).serializeToString(xmlData));
 
-                    if (body.tagName.toLowerCase() === 'body') {
+                    if (body.tagName.toLowerCase() == 'body') {
                         var message = body.firstChild.nodeValue;
 
                         var card_match = [];
@@ -3555,11 +3641,11 @@ function XimssSession() {
                         var card_match2 = [];
                         card_match2 = message.match(/ссылка\s(.*)\.\sИспользуйте/);
 
-                        if (card_match !== null && card_match.length > 0) {
+                        if (card_match != null && card_match.length > 0) {
 
-                            if (DEBUG_SIPNET === true) console.log("Received CG-Gard: " + card_match[1]);
+                            if (DEBUG_SIPNET == true) console.log("Received CG-Gard: " + card_match[1]);
                             this.onXimssReceiveCgCardId(peer, peerName, card_match[1]);
-                        } else if (card_match2 !== null && card_match2.length > 0) {
+                        } else if (card_match2 != null && card_match2.length > 0) {
 
                             var linkString = card_match2[1];
                             var origLink = card_match2[1];
@@ -3567,47 +3653,47 @@ function XimssSession() {
                             linkString = linkString.replace('{login}', this.userName);
                             linkString = linkString.replace('{sessionid}', this.urlID);
 
-                            if (DEBUG_SIPNET === true) console.log("Received CRM-link: " + origLink + " final link: " + linkString);
+                            if (DEBUG_SIPNET == true) console.log("Received CRM-link: " + origLink + " final link: " + linkString);
                             this.onXimssReceiveCRMlink(peer, peerName, linkString, origLink);
                         } else {
-                            if (peer === "pbx@" + this.serverName) {
+                            if (peer == "pbx@" + this.serverName) {
                                 var linkString = message;
                                 var origLink = message;
 
                                 linkString = linkString.replace('{login}', this.userName);
                                 linkString = linkString.replace('{sessionid}', this.urlID);
 
-                                if (DEBUG_SIPNET === true) console.log("!!!Received CRM-link from IM but not shown!!!: " + origLink + " final link: " + linkString);
+                                if (DEBUG_SIPNET == true) console.log("!!!Received CRM-link from IM but not shown!!!: " + origLink + " final link: " + linkString);
                             } else {
                                 this.onXimssReadIM(peer, peerName, message);
                             }
 
                         }
-                    } else if (body.tagName.toLowerCase() === 'composing') {
-                        if (DEBUG_SIPNET === true) console.log('.....composing.....');
+                    } else if (body.tagName.toLowerCase() == 'composing') {
+                        if (DEBUG_SIPNET == true) console.log('.....composing.....');
                         this.doXimssFileWriteDelivery(peer);
                         this.onXimssReadIMComposing(peer, peerName);
-                    } else if (body.tagName.toLowerCase() === 'gone') {
-                        if (DEBUG_SIPNET === true) console.log('.....gone......');
+                    } else if (body.tagName.toLowerCase() == 'gone') {
+                        if (DEBUG_SIPNET == true) console.log('.....gone......');
                         this.onXimssReadIMGone(peer, peerName);
                     }
 
                 }
 
-                if (tagName === "callprovisioned") {
+                if (tagName == "callprovisioned") {
 
                     var sdpTextNode;
 
                     for (var i = 0; i < xmlData.childNodes.length; ++i) {
                         sdpTextNode = xmlData.childNodes[i];
-                        if (sdpTextNode.tagName.toLowerCase() === this.xmlSdp.toLowerCase()) break;
+                        if (sdpTextNode.tagName.toLowerCase() == this.xmlSdp.toLowerCase()) break;
                     }
 
                     var callLeg = xmlData.getAttribute('callLeg');
                     var callId = '';
 
                     for (var key in this.currentCalls) {
-                        if (this.currentCalls[key]['callLeg'] === callLeg) {
+                        if (this.currentCalls[key]['callLeg'] == callLeg) {
                             callId = key;
 
                         }
@@ -3619,20 +3705,20 @@ function XimssSession() {
 
                     var mediaTag = xmlData.getAttribute('tag');
 
-                    if (sdpTextNode !== null && sdpTextNode.tagName.toLowerCase() === this.xmlSdp.toLowerCase()) {
+                    if (sdpTextNode != null && sdpTextNode.tagName.toLowerCase() == this.xmlSdp.toLowerCase()) {
 
 
-                        if (this.isSdpText === true) {
+                        if (this.isSdpText == true) {
                             this.currentCalls[callId]['sdp'][mediaTag] = sdpTextNode.firstChild.nodeValue;
                         } else {
                             this.currentCalls[callId]['sdp'][mediaTag] = this.fixCGSDPStr(SDPXML.getText(SDPXML.adjustServerXML(sdpTextNode)));
-                            if (DEBUG_SIPNET === true) console.log("TextSDP: " + this.currentCalls[callId]['sdp'][mediaTag]);
+                            if (DEBUG_SIPNET == true) console.log("TextSDP: " + this.currentCalls[callId]['sdp'][mediaTag]);
                         }
 
                         this.doCallUpdateAccept(callId);
                     } else {
                         this.doCallUpdateAccept(callId);
-                        if (DEBUG_SIPNET === true) console.log("callProvisioned: no SDP");
+                        if (DEBUG_SIPNET == true) console.log("callProvisioned: no SDP");
                     }
 
                     createLocalKPV();
@@ -3640,26 +3726,26 @@ function XimssSession() {
                 }
 
 
-                if (tagName === "callincoming") {
+                if (tagName == "callincoming") {
 
                     var sdpTextNode;
                     var answerAfter = false;
 
                     for (var i = 0; i < xmlData.childNodes.length; ++i) {
                         sdpTextNode = xmlData.childNodes[i];
-                        if (sdpTextNode.tagName.toLowerCase() === this.xmlSdp.toLowerCase()) break;
+                        if (sdpTextNode.tagName.toLowerCase() == this.xmlSdp.toLowerCase()) break;
                     }
 
                     for (var i = 0; i < xmlData.childNodes.length; ++i) {
-                        if (xmlData.childNodes[i].tagName.toLowerCase() === 'suppl') {
+                        if (xmlData.childNodes[i].tagName.toLowerCase() == 'suppl') {
                             var suppl = xmlData.childNodes[i];
                             for (var j = 0; j < suppl.childNodes.length; ++j) {
                                 var subKey = suppl.childNodes[j];
                                 var key = subKey.getAttribute('key');
 
-                                if (key === 'Alert-Info') {
-                                    if (DEBUG_SIPNET === true) console.log("It's the monitor call!");
-                                    if (subKey.firstChild.nodeValue === 'answer-after=0') answerAfter = true;
+                                if (key == 'Alert-Info') {
+                                    if (DEBUG_SIPNET == true) console.log("It's the monitor call!");
+                                    if (subKey.firstChild.nodeValue == 'answer-after=0') answerAfter = true;
                                 }
 
                             }
@@ -3673,7 +3759,7 @@ function XimssSession() {
                     var peer = xmlData.getAttribute('peer');
                     var cid = xmlData.getAttribute('callId');
 
-                    if (this.currentCalls !== null && Object.keys(this.currentCalls).length > 0 || (answerAfter === true && this.userStatus !== 'admin') || (answerAfter === false && this.userStatus === 'admin' && this.widget === false)) {
+                    if (this.currentCalls != null && Object.keys(this.currentCalls).length > 0 || (answerAfter == true && this.userStatus != 'admin') || (answerAfter == false && this.userStatus == 'admin' && this.widget == false)) {
 
                         var provisionCallResponse = this.theSession.createXMLNode("callProvision");
                         provisionCallResponse.setAttribute("callLeg", callLeg);
@@ -3686,13 +3772,13 @@ function XimssSession() {
 
                     } else {
 
-                        if (this.currentCalls === null) this.currentCalls = new Array();
+                        if (this.currentCalls == null) this.currentCalls = new Array();
                         this.currentCalls[1] = new Array();
                         this.currentCalls[1]['peer'] = peer;
                         this.currentCalls[1]['callLeg'] = callLeg;
                         this.currentCalls[1]['isHold'] = false;
-                        if (sdpTextNode !== null && sdpTextNode.tagName.toLowerCase() === this.xmlSdp.toLowerCase()) {
-                            if (this.isSdpText === true) {
+                        if (sdpTextNode != null && sdpTextNode.tagName.toLowerCase() == this.xmlSdp.toLowerCase()) {
+                            if (this.isSdpText == true) {
                                 this.currentCalls[1]['remoteSDP'] = sdpTextNode.firstChild.nodeValue;
                             } else {
                                 this.currentCalls[1]['remoteSDP'] = this.fixCGSDPStr(SDPXML.getText(SDPXML.adjustServerXML(sdpTextNode)));
@@ -3705,11 +3791,11 @@ function XimssSession() {
                         this.theSession.sendRequest(provisionCallResponse, ximssSession, this.ximssDataCallback, this.ximssOpCompleted, true);
 
                         if (sdpTextNode !== undefined){
-                            if (this.isSdpText === true) {
+                            if (this.isSdpText == true) {
                                 var sdpText = sdpTextNode.firstChild.nodeValue;
                             } else {
                                 var sdpText = this.fixCGSDPStr(SDPXML.getText(SDPXML.adjustServerXML(sdpTextNode)));
-                                if (DEBUG_SIPNET === true) console.log("TextSDP: " + sdpText);
+                                if (DEBUG_SIPNET == true) console.log("TextSDP: " + sdpText);
                             }
 
 
@@ -3723,7 +3809,7 @@ function XimssSession() {
                     }
 
                 }
-                if (tagName === "callconnected") {
+                if (tagName == "callconnected") {
                     deleteLocalKPV();
 
 
@@ -3731,14 +3817,14 @@ function XimssSession() {
 
                     for (var i = 0; i < xmlData.childNodes.length; ++i) {
                         sdpTextNode = xmlData.childNodes[i];
-                        if (sdpTextNode.tagName.toLowerCase() === this.xmlSdp.toLowerCase()) break;
+                        if (sdpTextNode.tagName.toLowerCase() == this.xmlSdp.toLowerCase()) break;
                     }
 
                     var callLeg = xmlData.getAttribute('callLeg');
                     var callId = '';
 
                     for (var key in this.currentCalls) {
-                        if (this.currentCalls[key]['callLeg'] === callLeg) {
+                        if (this.currentCalls[key]['callLeg'] == callLeg) {
                             callId = key;
 
                         }
@@ -3751,13 +3837,13 @@ function XimssSession() {
 
                     var mediaTag = xmlData.getAttribute('tag');
 
-                    if (sdpTextNode !== null && sdpTextNode.tagName.toLowerCase() === this.xmlSdp.toLowerCase()) {
+                    if (sdpTextNode != null && sdpTextNode.tagName.toLowerCase() == this.xmlSdp.toLowerCase()) {
 
-                        if (this.isSdpText === true) {
+                        if (this.isSdpText == true) {
                             this.currentCalls[callId]['sdp'][mediaTag] = sdpTextNode.firstChild.nodeValue;
                         } else {
                             this.currentCalls[callId]['sdp'][mediaTag] = this.fixCGSDPStr(SDPXML.getText(SDPXML.adjustServerXML(sdpTextNode)));
-                            if (DEBUG_SIPNET === true) console.log("TextSDP: " + this.currentCalls[callId]['sdp'][mediaTag]);
+                            if (DEBUG_SIPNET == true) console.log("TextSDP: " + this.currentCalls[callId]['sdp'][mediaTag]);
                         }
 
 
@@ -3768,7 +3854,7 @@ function XimssSession() {
                         var videoSDP = '';
                         var withVideo = false;
                         var indexVideo = remoteSDP.indexOf('m=video');
-                        if (indexVideo !== -1) {
+                        if (indexVideo != -1) {
                             videoSDP = remoteSDP.substring(indexVideo);
                             var directionVideoSR = videoSDP.indexOf('a=sendrecv');
                             if (directionVideoSR > -1) {
@@ -3781,7 +3867,7 @@ function XimssSession() {
                     } else {
 
                         if (this.currentCalls[callId]['sdp'][mediaTag] === undefined) {
-                            if (DEBUG_SIPNET === true) console.log("CallConnected: no SDP, enjoy the silence...");
+                            if (DEBUG_SIPNET == true) console.log("CallConnected: no SDP, enjoy the silence...");
                         } else {
                             var remoteSDP = this.currentCalls[callId]['sdp'][mediaTag];
                             this.currentCalls[callId]['sdp']['currentTag'] = mediaTag;
@@ -3791,11 +3877,11 @@ function XimssSession() {
                     }
 
                     this.doCallUpdateAccept(callId);
-                    if (DEBUG_SIPNET === true) console.log('Answer with video: ' + withVideo);
+                    if (DEBUG_SIPNET == true) console.log('Answer with video: ' + withVideo);
                     if (this.onXimssCallConnected) this.onXimssCallConnected(callId, withVideo);
                 }
 
-                if (tagName === "callupdated") {
+                if (tagName == "callupdated") {
                     /*
                     - Когда принимается входящий звонок, Клиент может послать:
                     ноль, один или несколько запросов callProvision. Для каждого запроса callProvision Сервер присылает сообщение callUpdated.
@@ -3808,14 +3894,14 @@ function XimssSession() {
 
                     for (var i = 0; i < xmlData.childNodes.length; ++i) {
                         sdpTextNode = xmlData.childNodes[i];
-                        if (sdpTextNode.tagName.toLowerCase() === this.xmlSdp.toLowerCase()) break;
+                        if (sdpTextNode.tagName.toLowerCase() == this.xmlSdp.toLowerCase()) break;
                     }
 
                     var callLeg = xmlData.getAttribute('callLeg');
                     var callId = '';
 
                     for (var key in this.currentCalls) {
-                        if (this.currentCalls[key]['callLeg'] === callLeg) {
+                        if (this.currentCalls[key]['callLeg'] == callLeg) {
                             callId = key;
 
                         }
@@ -3825,26 +3911,26 @@ function XimssSession() {
                     var updateErrorText = xmlData.getAttribute('errorText');
 
 
-                    if (updateSignalCode !== null) {
+                    if (updateSignalCode != null) {
                         if (this.onXimssCallUpdatedError) this.onXimssCallUpdatedError(this.currentCalls[callId]['isHold'], callId, updateSignalCode, updateErrorText);
                         return;
                     }
 
-                    if (sdpTextNode !== null && sdpTextNode.tagName.toLowerCase() === this.xmlSdp.toLowerCase()) {
+                    if (sdpTextNode != null && sdpTextNode.tagName.toLowerCase() == this.xmlSdp.toLowerCase()) {
                         var remoteSDP;
 
-                        if (this.isSdpText === true) {
+                        if (this.isSdpText == true) {
                             remoteSDP = sdpTextNode.firstChild.nodeValue;
                         } else {
                             remoteSDP = this.fixCGSDPStr(SDPXML.getText(SDPXML.adjustServerXML(sdpTextNode)));
-                            if (DEBUG_SIPNET === true) console.log("TextSDP: " + remoteSDP);
+                            if (DEBUG_SIPNET == true) console.log("TextSDP: " + remoteSDP);
                         }
 
                         this.remoteSDPRecived(remoteSDP, callId);
                     } else {
                         if (this.currentCalls[callId] !== undefined) {
                             if (this.currentCalls[callId]['pc'] !== undefined) {
-                                if (this.currentCalls[callId]['pc'].signalingState === 'have-local-offer') {
+                                if (this.currentCalls[callId]['pc'].signalingState == 'have-local-offer') {
                                     if (this.currentCalls[callId]['sdp'] !== undefined) {
                                         var mediaTag = this.currentCalls[callId]['sdp']['currentTag'];
                                         var remoteSDP = this.currentCalls[callId]['sdp'][mediaTag];
@@ -3854,12 +3940,12 @@ function XimssSession() {
                                         this.remoteSDPRecived(remoteSDP, callId);
                                     }
                                 }
-                                if (DEBUG_SIPNET === true) console.log('PEER STATE ' + this.currentCalls[callId]['pc'].signalingState);
+                                if (DEBUG_SIPNET == true) console.log('PEER STATE ' + this.currentCalls[callId]['pc'].signalingState);
                             }
                         }
 
 
-                        if (DEBUG_SIPNET === true) console.log("No SDP with callUpdated.");
+                        if (DEBUG_SIPNET == true) console.log("No SDP with callUpdated.");
                     }
 
                     if (this.currentCalls[callId] !== undefined) {
@@ -3867,33 +3953,33 @@ function XimssSession() {
                     }
                 }
 
-                if (tagName === "callupdaterequest") {
+                if (tagName == "callupdaterequest") {
                     var sdpTextNode;
 
                     for (var i = 0; i < xmlData.childNodes.length; ++i) {
                         sdpTextNode = xmlData.childNodes[i];
-                        if (sdpTextNode.tagName.toLowerCase() === this.xmlSdp.toLowerCase()) break;
+                        if (sdpTextNode.tagName.toLowerCase() == this.xmlSdp.toLowerCase()) break;
                     }
 
                     var callLeg = xmlData.getAttribute('callLeg');
                     var callId = '';
 
                     for (var key in this.currentCalls) {
-                        if (this.currentCalls[key]['callLeg'] === callLeg) {
+                        if (this.currentCalls[key]['callLeg'] == callLeg) {
                             callId = key;
                         }
                     }
 
-                    if (sdpTextNode !== null && sdpTextNode.tagName.toLowerCase() === this.xmlSdp.toLowerCase()) {
+                    if (sdpTextNode != null && sdpTextNode.tagName.toLowerCase() == this.xmlSdp.toLowerCase()) {
                         var remoteSDP;
 
-                        if (this.isSdpText === true) {
+                        if (this.isSdpText == true) {
                             remoteSDP = sdpTextNode.firstChild.nodeValue;
                             this.currentCalls[callId]['remoteSDP'] = sdpTextNode.firstChild.nodeValue;
                         } else {
                             remoteSDP = this.fixCGSDPStr(SDPXML.getText(SDPXML.adjustServerXML(sdpTextNode)));
                             this.currentCalls[callId]['remoteSDP'] = remoteSDP;
-                            if (DEBUG_SIPNET === true) console.log("TextSDP: " + remoteSDP);
+                            if (DEBUG_SIPNET == true) console.log("TextSDP: " + remoteSDP);
                         }
 
 
@@ -3904,11 +3990,11 @@ function XimssSession() {
                         var isHold = false;
                         var status = '';
 
-                        if (isSendonly !== -1 || isInactive !== -1) {
-                            if (isSendonly !== -1 || isMoh !== -1) {
+                        if (isSendonly != -1 || isInactive != -1) {
+                            if (isSendonly != -1 || isMoh != -1) {
                                 status = 'sendonly';
                             }
-                            if (isInactive !== -1) {
+                            if (isInactive != -1) {
                                 status = 'inactive';
                             }
                             isHold = true;
@@ -3917,14 +4003,14 @@ function XimssSession() {
                         this.onXimssOnHold(isHold, status);
 
                     } else {
-                        if (DEBUG_SIPNET === true) console.log("No SDP with callUpdateRequest");
+                        if (DEBUG_SIPNET == true) console.log("No SDP with callUpdateRequest");
                         return;
                     }
                     this.doUpdateRequestAccept(callId, 'offer');
                 }
 
 
-                if (tagName === "calldisconnected") {
+                if (tagName == "calldisconnected") {
                     var errorText = xmlData.getAttribute('errorText');
                     var cLeg = xmlData.getAttribute('callLeg');
                     deleteLocalKPV();
@@ -3932,39 +4018,39 @@ function XimssSession() {
                     var callId = '';
 
                     for (var key in this.currentCalls) {
-                        if (this.currentCalls[key]['callLeg'] === cLeg) {
+                        if (this.currentCalls[key]['callLeg'] == cLeg) {
                             callId = key;
 
                         }
                     }
 
-                    if (callId !== '') {
+                    if (callId != '') {
                         this.doCallKill(callId);
                         if (this.onXimssCallDisconnected) this.onXimssCallDisconnected(errorText, callId);
                     }
 
 
                 }
-                if (tagName === "presence" && this.onXimssPresence) {
+                if (tagName == "presence" && this.onXimssPresence) {
                     var peer = xmlData.getAttribute('peer');
                     var presenseType = xmlData.getAttribute('type');
                     var statusShow, statusPresence;
 
-                    if (presenseType !== 'unavailable') {
+                    if (presenseType != 'unavailable') {
                         for (var i = 0; i < xmlData.childNodes.length; ++i) {
                             var presenceNodes = xmlData.childNodes[i];
 
-                            if (presenceNodes.tagName === 'show') {
+                            if (presenceNodes.tagName == 'show') {
                                 statusShow = presenceNodes.firstChild.nodeValue;
                             }
-                            if (presenceNodes.tagName === 'presence') {
+                            if (presenceNodes.tagName == 'presence') {
                                 statusPresence = presenceNodes.firstChild.nodeValue;
                             }
-                            if (presenceNodes.tagName === 'x') {
+                            if (presenceNodes.tagName == 'x') {
                                 var xmlns = presenceNodes.getAttribute('xmlns');
-                                if (xmlns === 'jabber:iq:avatar') {
+                                if (xmlns == 'jabber:iq:avatar') {
                                     var hashNode = presenceNodes.firstChild;
-                                    if (hashNode.firstChild !== null)
+                                    if (hashNode.firstChild != null)
                                         var photoHash = hashNode.firstChild.nodeValue;
                                 }
                             }
@@ -3975,17 +4061,17 @@ function XimssSession() {
                         statusPresence = 'offline';
                     }
 
-                    if (DEBUG_SIPNET === true) console.log('presence for ' + peer + ' : show:' + statusShow + ' presence:' + statusPresence + ' hash: ' + photoHash);
+                    if (DEBUG_SIPNET == true) console.log('presence for ' + peer + ' : show:' + statusShow + ' presence:' + statusPresence + ' hash: ' + photoHash);
                     this.onXimssPresence(peer, statusShow, statusPresence, photoHash);
                 }
 
-                if (tagName === "makecallreport") {
+                if (tagName == "makecallreport") {
                     var reportText = null;
-                    if (xmlData.firstChild !== null) reportText = xmlData.firstChild.nodeValue;
+                    if (xmlData.firstChild != null) reportText = xmlData.firstChild.nodeValue;
                     this.onXimssMakeCallReport(reportText);
                 }
 
-                if (tagName === "callopfailed") {
+                if (tagName == "callopfailed") {
                     var errorText = xmlData.getAttribute('errorText');
                     var signalCode = xmlData.getAttribute('signalCode');
 
@@ -3993,27 +4079,27 @@ function XimssSession() {
                     var callId = '';
 
                     for (var key in this.currentCalls) {
-                        if (this.currentCalls[key]['callLeg'] === callLeg) {
+                        if (this.currentCalls[key]['callLeg'] == callLeg) {
                             callId = key;
                         }
                     }
 
                     this.onXimssCallOpFailed(errorText, signalCode, callId);
                 }
-                if (tagName === "callopcompleted") {
+                if (tagName == "callopcompleted") {
 
                     var callLeg = xmlData.getAttribute('callLeg');
                     var callId = '';
 
                     for (var key in this.currentCalls) {
-                        if (this.currentCalls[key]['callLeg'] === callLeg) {
+                        if (this.currentCalls[key]['callLeg'] == callLeg) {
                             callId = key;
                         }
                     }
                     this.onXimssCallOpCompleted(callId);
                 }
 
-                if (tagName === "iqread") {
+                if (tagName == "iqread") {
                     var peer = xmlData.getAttribute('peer');
                     var xmlVCard = xmlData.firstChild;
 
@@ -4025,12 +4111,12 @@ function XimssSession() {
                     });
                 }
 
-                if (tagName === "folderreport") {
+                if (tagName == "folderreport") {
                     var folder = xmlData.getAttribute('folder');
                     var mode = xmlData.getAttribute('mode');
                     var uid = xmlData.getAttribute('UID');
 
-                    if (mode === "notify") {
+                    if (mode == "notify") {
                         this.doXimssFolderSync(folder);
                     }
                 }
@@ -4039,30 +4125,30 @@ function XimssSession() {
         },
 
         ximssAsyncSession: function (xmlData) {
-            if (DEBUG_SIPNET === true) console.log("ximssAsyncSession: " + (new XMLSerializer()).serializeToString(xmlData));
+            if (DEBUG_SIPNET == true) console.log("ximssAsyncSession: " + (new XMLSerializer()).serializeToString(xmlData));
         },
 
 
         ximssNetworkErrorProcessor: function (isFatal, timeElapsed) {
 
-            if (DEBUG_SIPNET === true) console.log("network error" + isFatal + " " + timeElapsed);
+            if (DEBUG_SIPNET == true) console.log("network error" + isFatal + " " + timeElapsed);
             this.onNetworkError(isFatal, timeElapsed);
 
-            if (isFatal === true) {
-                if (DEBUG_SIPNET === true) console.log('doLogout if ximssNetworkErrorProcessor');
+            if (isFatal == true) {
+                if (DEBUG_SIPNET == true) console.log('doLogout if ximssNetworkErrorProcessor');
                 this.doForceCloseXimssSession();
             }
         },
 
         ximssNetworkOKProcessor: function () {
-            if (DEBUG_SIPNET === true) console.log("network ok");
+            if (DEBUG_SIPNET == true) console.log("network ok");
             this.onNetworkOk();
         },
 
         ximssOpCompleted: function (errorCode, xmlData) {
-            if (this.theSession !== null) {
+            if (this.theSession != null) {
                 var errorTemp;
-                if (errorCode === null) {
+                if (errorCode == null) {
                     errorTemp = 'Ok';
 
                     var logString = (new XMLSerializer()).serializeToString(xmlData);
@@ -4071,40 +4157,40 @@ function XimssSession() {
                     logString = logString.replace(new RegExp("<BINVAL>(.*)<\/BINVAL>", 'g'), '...');
                     logString = logString.replace(new RegExp("<base64>(.*)<\/base64>", 'g'), '...');
 
-                    if (DEBUG_SIPNET === true) console.log("ximssOpCompleted: %c" + errorTemp + '\n%cC: ' + logString, "color:green;", "color:orange;");
+                    if (DEBUG_SIPNET == true) console.log("ximssOpCompleted: %c" + errorTemp + '\n%cC: ' + logString, "color:green;", "color:orange;");
                 } else {
-                    if (errorCode === 'meeting is already activated') {
+                    if (errorCode == 'meeting is already activated') {
                         this.onConflict();
                     }
-                    if (errorCode === 'file is not found') {
+                    if (errorCode == 'file is not found') {
 
-                        if (xmlData === null) return;
+                        if (xmlData == null) return;
 
                         var tagName = xmlData.tagName.toLowerCase();
-                        if (tagName === "fileread") {
+                        if (tagName == "fileread") {
                             var fileName = xmlData.getAttribute("fileName");
                         }
 
                         this.onFileNotFound(fileName);
                     }
-                    if (errorCode === 'illegal vCard data format') {
+                    if (errorCode == 'illegal vCard data format') {
                         this.onvCardFail();
                     }
-                    if (errorCode === 'mailbox access denied') {
+                    if (errorCode == 'mailbox access denied') {
                         this.onMailBoxAccessError();
                     }
 
-                    if (errorCode === 'async Object not found') {
+                    if (errorCode == 'async Object not found') {
                         var tagName = xmlData.tagName.toLowerCase();
                         var eventName = xmlData.getAttribute('eventName');
 
-                        if (tagName === "tasksendevent" && eventName === "rcall") {
+                        if (tagName == "tasksendevent" && eventName == "rcall") {
                             this.isCallPending = true;
                             this.doXimssFindTaskMeeting('pbx', 'agent');
                         }
 
                         var tagName = xmlData.tagName.toLowerCase();
-                        if (DEBUG_SIPNET === true) console.log(tagName);
+                        if (DEBUG_SIPNET == true) console.log(tagName);
                     }
 
                     errorTemp = errorCode;
@@ -4115,7 +4201,7 @@ function XimssSession() {
                     logString = logString.replace(new RegExp("<BINVAL>(.*)<\/BINVAL>", 'g'), '...');
                     logString = logString.replace(new RegExp("<base64>(.*)<\/base64>", 'g'), '...');
 
-                    if (DEBUG_SIPNET === true) console.log("ximssOpCompleted: %c" + errorTemp + '\n%cC: ' + logString, "color:red;", "color:orange;");
+                    if (DEBUG_SIPNET == true) console.log("ximssOpCompleted: %c" + errorTemp + '\n%cC: ' + logString, "color:red;", "color:orange;");
 
                     switch(errorTemp){
                         case "meeting is already activated": break;
@@ -4130,32 +4216,32 @@ function XimssSession() {
                     }
                 }
 
-                if (xmlData === null) return;
+                if (xmlData == null) return;
 
                 var tagName = xmlData.tagName.toLowerCase();
 
 
-                if (tagName === "callreject") {
-                    if (DEBUG_SIPNET === true) console.log("Delete call line: " + this.rejectId);
+                if (tagName == "callreject") {
+                    if (DEBUG_SIPNET == true) console.log("Delete call line: " + this.rejectId);
                     delete this.currentCalls[this.rejectId];
                 }
 
-                if (tagName === "signalbind") {
+                if (tagName == "signalbind") {
                     var xmlStr = (new XMLSerializer()).serializeToString(xmlData);
                     if (xmlStr.indexOf("o=- 1 2 IN IP4 127.0.0.1") !== -1) {
                         this.onXimssSignalBindForDevice();
-                        if (DEBUG_SIPNET === true) console.log("onXimssSignalBindForDevice");
+                        if (DEBUG_SIPNET == true) console.log("onXimssSignalBindForDevice");
                     } else {
-                        if (DEBUG_SIPNET === true) console.log("onXimssSignalBind");
+                        if (DEBUG_SIPNET == true) console.log("onXimssSignalBind");
                         this.onXimssSignalBind();
 
-                        if (this.localStream !== null) {
+                        if (this.localStream != null) {
 
                             this.localStream.getAudioTracks()[0].stop();
                             if (this.localStream.getVideoTracks()[0] !== undefined)
                                 this.localStream.getVideoTracks()[0].stop();
 
-                            if (this.ifFirefox === true) {
+                            if (this.ifFirefox == true) {
 
                             } else {
 
@@ -4165,49 +4251,49 @@ function XimssSession() {
 
                     }
 
-                    if (this.isPresence === true) {
+                    if (this.isPresence == true) {
                         this.doRosterList();
                         this.doPresenceSet("online");
                     }
 
                 }
 
-                if (tagName === "filewrite") {
+                if (tagName == "filewrite") {
                     this.onXimssFileWrite();
                 }
 
-                if (tagName === "taskfindmeeting") {
-                    if (errorCode === 'meeting not found') {
-                        if (xmlData.getAttribute("meetingName") === 'agent' && this.widget === true) {
+                if (tagName == "taskfindmeeting") {
+                    if (errorCode == 'meeting not found') {
+                        if (xmlData.getAttribute("meetingName") == 'agent' && this.widget == true) {
                             this.agentReferer = null;
                             this.onPMOfind();
                             return;
                         }
-                        this.userStatus === 'admin' ?
+                        this.userStatus == 'admin' ?
                             this.doXimssTaskCreateMeeting('pbx', this.adminKey) :
                             this.doXimssTaskCreateMeeting('pbx', this.userStatus);
                     }
                 }
 
-                if (tagName === "taskcreatemeeting" || tagName === "taskclearmeeting") {
-                    if (errorCode === null) {
-                        this.userStatus === 'admin' ?
+                if (tagName == "taskcreatemeeting" || tagName == "taskclearmeeting") {
+                    if (errorCode == null) {
+                        this.userStatus == 'admin' ?
                             this.doXimssTaskActivateMeeting('pbx', this.adminKey) :
                             this.doXimssTaskActivateMeeting('pbx', this.userStatus);
                     }
                 }
 
-                if (tagName === "taskdeactivatemeeting") {
-                    this.userStatus === 'admin' ?
+                if (tagName == "taskdeactivatemeeting") {
+                    this.userStatus == 'admin' ?
                         this.doXimssTaskRemoveMeeting('pbx', this.adminKey) :
                         this.doXimssTaskRemoveMeeting('pbx', this.userStatus);
                     this.doCloseXimssSession();
                 }
 
-                if (tagName === "taskactivatemeeting") {
-                    if (this.userStatus === 'admin' && this.widget === true) {
+                if (tagName == "taskactivatemeeting") {
+                    if (this.userStatus == 'admin' && this.widget == true) {
                         this.doXimssSendMsg('hub@sipnet.ru', 'chat', "{cmd=subscribe;key=" + this.adminKey + ";widget=amoCRM;}");
-                    } else if (this.userStatus === 'admin' && this.widget === false) {
+                    } else if (this.userStatus == 'admin' && this.widget == false) {
                         this.doXimssSendMsg('hub@sipnet.ru', 'chat', "{cmd=subscribe;key=" + this.adminKey + ";}");
                     } else {
                         this.doXimssSendMsg('hub@sipnet.ru', 'chat', "{cmd=register;}");
@@ -4216,52 +4302,52 @@ function XimssSession() {
                 }
 
 
-                if (tagName === "tasksendevent") {
+                if (tagName == "tasksendevent") {
 
                     var eventName = xmlData.getAttribute('eventName');
 
-                    if (eventName === 'conflict') {
-                        this.userStatus === 'admin' ?
+                    if (eventName == 'conflict') {
+                        this.userStatus == 'admin' ?
                             this.doXimssTaskClearMeeting('pbx', this.adminKey) :
                             this.doXimssTaskClearMeeting('pbx', this.userStatus);
                     }
 
-                    if (eventName === 'agent-bye') {
-                        if (this.conflict === false) {
-                            this.userStatus === 'admin' ?
+                    if (eventName == 'agent-bye') {
+                        if (this.conflict == false) {
+                            this.userStatus == 'admin' ?
                                 this.doXimssTaskDeactivateMeeting('pbx', this.adminKey) :
                                 this.doXimssTaskDeactivateMeeting('pbx', this.userStatus);
                         } else {
-                            if (DEBUG_SIPNET === true) console.log('agent-bye');
+                            if (DEBUG_SIPNET == true) console.log('agent-bye');
                             this.doCloseXimssSession();
                         }
                     }
 
-                    if (eventName === 'admin-bye') {
-                        if (this.conflict === false) {
-                            this.userStatus === 'admin' ?
+                    if (eventName == 'admin-bye') {
+                        if (this.conflict == false) {
+                            this.userStatus == 'admin' ?
                                 this.doXimssTaskDeactivateMeeting('pbx', this.adminKey) :
                                 this.doXimssTaskDeactivateMeeting('pbx', this.userStatus);
                         } else {
-                            if (DEBUG_SIPNET === true) console.log('admin-bye');
+                            if (DEBUG_SIPNET == true) console.log('admin-bye');
                             this.doCloseXimssSession();
                         }
                     }
                     this.onXimssTaskSendEvent(eventName);
                 }
 
-                if (tagName === "makecall") {
+                if (tagName == "makecall") {
                     var peer = xmlData.getAttribute('peer');
                 }
 
-                if (tagName === "calltransfer") {
+                if (tagName == "calltransfer") {
                     this.onXimssCallTransfer();
                 }
 
-                if (tagName === "callaccept") {
+                if (tagName == "callaccept") {
 
 
-                    if (callLeg === "") return;
+                    if (callLeg == "") return;
 
                     var callLeg = xmlData.getAttribute('callLeg');
                     var callId = '';
@@ -4284,10 +4370,10 @@ function XimssSession() {
 
                     //if (this.onXimssCallAccept) this.onXimssCallAccept(callId, isMediaProxied);
                 }
-                if (tagName === "callupdateaccept") {
+                if (tagName == "callupdateaccept") {
 
 
-                    if (callLeg === "") return;
+                    if (callLeg == "") return;
 
                     var callLeg = xmlData.getAttribute('callLeg');
                     var callId = '';
@@ -4315,9 +4401,9 @@ function XimssSession() {
                         if (this.onXimssCallUpdateAccept) this.onXimssCallUpdateAccept(isMediaProxied);
                 }
 
-                if (tagName === "callredirect") {
+                if (tagName == "callredirect") {
                     deleteLocalKPV();
-                    if (callLeg === "") return;
+                    if (callLeg == "") return;
 
                     var callLeg = xmlData.getAttribute('callLeg');
                     var callId = '';
@@ -4330,17 +4416,17 @@ function XimssSession() {
 
                     var self = this;
 
-                    if (this.currentCalls[callId]['pc'] !== null) {
+                    if (this.currentCalls[callId]['pc'] != null) {
 
                         if (this.ifFirefox === true) {
 
-                            if (this.currentCalls[callId]['pc'].signalingState === 'stable') {
+                            if (this.currentCalls[callId]['pc'].signalingState == 'stable') {
 
                                 this.currentCalls[callId]['pc'].getSenders().forEach(function (sender) {
                                     self.currentCalls[callId]['localStream'].getTracks().forEach(function (track) {
                                         if (sender.track === track) {
                                             self.currentCalls[callId]['pc'].removeTrack(sender);
-                                            if (DEBUG_SIPNET === true) console.log('removeTrack');
+                                            if (DEBUG_SIPNET == true) console.log('removeTrack');
                                         }
                                     });
                                 });
@@ -4351,7 +4437,7 @@ function XimssSession() {
                         }
 
 
-                        if (this.currentCalls[callId]['pc'] !== null) {
+                        if (this.currentCalls[callId]['pc'] != null) {
                             this.unsubscribePC(this.currentCalls[callId]['pc']);
                             this.currentCalls[callId]['pc'].close();
                             this.currentCalls[callId]['pc'] = null;
@@ -4359,7 +4445,7 @@ function XimssSession() {
 
 
                     }
-                    if (this.currentCalls[callId]['localStream'] !== null) {
+                    if (this.currentCalls[callId]['localStream'] != null) {
                         this.currentCalls[callId]['localStream'].getAudioTracks()[0].stop();
                         if (this.currentCalls[callId]['localStream'].getVideoTracks()[0] !== undefined)
                             this.currentCalls[callId]['localStream'].getVideoTracks()[0].stop();
@@ -4372,7 +4458,7 @@ function XimssSession() {
         },
 
         unsubscribePC: function (pcToUs) {
-            if (DEBUG_SIPNET === true) console.info(pcToUs);
+            if (DEBUG_SIPNET == true) console.info(pcToUs);
             pcToUs.onicecandidate = null;
             pcToUs.oniceconnectionstatechange = null;
             pcToUs.onnegotiationneeded = null;
@@ -4382,7 +4468,7 @@ function XimssSession() {
         },
 
         ximssDataCallback: function (xmlResponse, xmlData) {
-            if (this.theSession !== null) {
+            if (this.theSession != null) {
 
                 var self = this;
 
@@ -4392,7 +4478,7 @@ function XimssSession() {
                 logString = logString.replace(new RegExp("<BINVAL>(.*)<\/BINVAL>", 'g'), '...');
                 logString = logString.replace(new RegExp("<base64>(.*)<\/base64>", 'g'), '...');
 
-                if (DEBUG_SIPNET === true) console.log("%cS: " + logString, "color:blue;");
+                if (DEBUG_SIPNET == true) console.log("%cS: " + logString, "color:blue;");
 
 
                 if (xmlResponse === null) return;
@@ -4400,13 +4486,13 @@ function XimssSession() {
                 var tagName = xmlResponse.tagName.toLowerCase();
 
 
-                if (tagName === "filedata") {
+                if (tagName == "filedata") {
                     var fileName = xmlResponse.getAttribute("fileName");
                     var type = xmlResponse.getAttribute("type");
 
                     var fileData = xmlResponse.firstChild;
 
-                    if (type === "vcard") {
+                    if (type == "vcard") {
                         var xmlVCard = xmlResponse.firstChild;
                         var myContact = new Contact();
                         myContact.vCardXML = xmlVCard;
@@ -4420,7 +4506,7 @@ function XimssSession() {
 
                 }
 
-                if (tagName === "fileinfo") {
+                if (tagName == "fileinfo") {
                     var fileName = xmlResponse.getAttribute("fileName");
                     var size = xmlResponse.getAttribute("size");
                     var timeModified = xmlResponse.getAttribute("timeModified");
@@ -4430,8 +4516,8 @@ function XimssSession() {
                 }
 
 
-                if (tagName === "taskmeeting") {
-                    if (xmlResponse.getAttribute("meetingName") === 'agent' && this.widget === true) {
+                if (tagName == "taskmeeting") {
+                    if (xmlResponse.getAttribute("meetingName") == 'agent' && this.widget == true) {
                         this.agentReferer = xmlResponse.getAttribute("taskRef");
                         this.onPMOfind();
                         return;
@@ -4439,22 +4525,22 @@ function XimssSession() {
 
                     this.taskReferer = xmlResponse.getAttribute("taskRef");
 
-                    if (this.taskReferer !== null) {
+                    if (this.taskReferer != null) {
                         this.doXimssSendEvent('conflict', null, this.taskReferer);
                     } else {
-                        this.userStatus === 'admin' ?
+                        this.userStatus == 'admin' ?
                             this.doXimssTaskClearMeeting('pbx', this.adminKey) :
                             this.doXimssTaskClearMeeting('pbx', this.userStatus);
                     }
 
                 }
 
-                if (tagName === "cliresult") {
+                if (tagName == "cliresult") {
                     var cliResult = xmlResponse.firstChild;
                     this.onXimssCliResult(cliResult);
                 }
 
-                if (tagName === "rosteritem") {
+                if (tagName == "rosteritem") {
                     var peerName = xmlResponse.getAttribute('name');
                     var peer = xmlResponse.getAttribute('peer');
                     var subscription = xmlResponse.getAttribute('subscription');
@@ -4463,48 +4549,48 @@ function XimssSession() {
                     var groups = [];
 
                     for (var i = 0; i < xmlResponse.childNodes.length; ++i) {
-                        if (xmlResponse.childNodes[i].tagName === 'group') {
+                        if (xmlResponse.childNodes[i].tagName == 'group') {
                             groups.push(xmlResponse.childNodes[i].textContent);
                         }
                     }
 
-                    if (DEBUG_SIPNET === true) console.log('Peer: ' + peer + ' ' + subscription + ' ' + groups);
-                    if (peer !== null) {
+                    if (DEBUG_SIPNET == true) console.log('Peer: ' + peer + ' ' + subscription + ' ' + groups);
+                    if (peer != null) {
                         this.onXimssRosterItem(peerName, peer, groups, subscription);
                     }
 
 
                 }
 
-                if (tagName === "folderreport") {
+                if (tagName == "folderreport") {
                     var folder = xmlResponse.getAttribute('folder');
                     var mode = xmlResponse.getAttribute('mode');
                     var uid = xmlResponse.getAttribute('UID');
 
 
-                    if (mode === "init") {
+                    if (mode == "init") {
                         var messages = xmlResponse.getAttribute('messages');
                         var unseen = xmlResponse.getAttribute('unseen');
-                        if (folder === 'INBOX') {
+                        if (folder == 'INBOX') {
                             this.onXimssVoiceMessages(messages, unseen);
                         }
-                        if (folder === 'MainContacts' || folder === 'MyContacts') {
+                        if (folder == 'MainContacts' || folder == 'MyContacts') {
                             this.onXimssContactsInfo(folder, messages);
                         }
                         this.doXimssFolderBrowse(folder, "0", messages);
-                    } else if (mode === "removed") {
+                    } else if (mode == "removed") {
                         var index = xmlResponse.getAttribute('index');
                         this.onXimssContactRemoved(folder, uid);
-                    } else if (mode === "added") {
+                    } else if (mode == "added") {
                         var index = xmlResponse.getAttribute('index');
                         var messages = xmlResponse.getAttribute('messages');
                         var UID = xmlResponse.getAttribute('UID');
                         this.doXimssFolderBrowseByUID(folder, UID);
 
-                    } else if (mode === "notify") {
+                    } else if (mode == "notify") {
                         this.doXimssFolderSync(folder);
-                    } else if (mode === null && uid !== null) {
-                        if (folder === 'INBOX') {
+                    } else if (mode == null && uid != null) {
+                        if (folder == 'INBOX') {
                             var flags = xmlResponse.firstChild.textContent;
 
                             this.onXimssVoiceMailFlags(uid, flags);
@@ -4515,13 +4601,13 @@ function XimssSession() {
 
 
                 }
-                if (tagName === "foldermessage") {
+                if (tagName == "foldermessage") {
                     var folder = xmlResponse.getAttribute('folder');
                     var UID = xmlResponse.getAttribute('UID');
                     var xmlVCard = xmlResponse.firstChild;
 
 
-                    if (folder === "INBOX") {
+                    if (folder == "INBOX") {
 
 
                         var EMail = xmlResponse.firstChild;
@@ -4529,7 +4615,7 @@ function XimssSession() {
                         var From, Date, url;
 
                         for (var i = 0; i < EMail.childNodes.length; ++i) {
-                            if (EMail.childNodes[i].tagName === 'MIME') {
+                            if (EMail.childNodes[i].tagName == 'MIME') {
                                 var MIME = EMail.childNodes[i];
                                 var MIME2 = MIME.firstChild;
 
@@ -4540,10 +4626,10 @@ function XimssSession() {
 
 
                             }
-                            if (EMail.childNodes[i].tagName === 'From') {
+                            if (EMail.childNodes[i].tagName == 'From') {
                                 From = EMail.childNodes[i].textContent;
                             }
-                            if (EMail.childNodes[i].tagName === 'Date') {
+                            if (EMail.childNodes[i].tagName == 'Date') {
                                 Date = EMail.childNodes[i].textContent;
                             }
                         }
@@ -4564,28 +4650,28 @@ function XimssSession() {
 
                         var EMail2 = xmlResponse.firstChild;
                         for (var z = 0; z < EMail2.childNodes.length; z++) {
-                            if (EMail2.childNodes[z].tagName === 'To') {
+                            if (EMail2.childNodes[z].tagName == 'To') {
                                 toFields.push(EMail2.childNodes[z].textContent);
                             }
-                            if (EMail2.childNodes[z].tagName === 'Subject') {
+                            if (EMail2.childNodes[z].tagName == 'Subject') {
                                 subject = EMail2.childNodes[z].textContent;
                             }
-                            if (EMail2.childNodes[z].tagName === 'X-Telnum') {
+                            if (EMail2.childNodes[z].tagName == 'X-Telnum') {
                                 var xtAttr = EMail2.childNodes[z].getAttribute('type');
-                                if (xtAttr === 'WORK') xWork = EMail2.childNodes[z].textContent;
-                                if (xtAttr === 'AGENT') xAgent = EMail2.childNodes[z].textContent;
+                                if (xtAttr == 'WORK') xWork = EMail2.childNodes[z].textContent;
+                                if (xtAttr == 'AGENT') xAgent = EMail2.childNodes[z].textContent;
                             }
 
-                            if (EMail2.childNodes[z].tagName === 'X-FirstName') {
+                            if (EMail2.childNodes[z].tagName == 'X-FirstName') {
                                 xFirstName = EMail2.childNodes[z].textContent;
                             }
-                            if (EMail2.childNodes[z].tagName === 'X-LastName') {
+                            if (EMail2.childNodes[z].tagName == 'X-LastName') {
                                 xLastName = EMail2.childNodes[z].textContent;
                             }
-                            if (EMail2.childNodes[z].tagName === 'Message-ID') {
+                            if (EMail2.childNodes[z].tagName == 'Message-ID') {
                                 MessageID = EMail2.childNodes[z].textContent;
                             }
-                            if (EMail2.childNodes[z].tagName === 'Date') {
+                            if (EMail2.childNodes[z].tagName == 'Date') {
                                 xDate = EMail2.childNodes[z].textContent;
                             }
                         }
@@ -4605,21 +4691,21 @@ function XimssSession() {
                     }
                 }
 
-                if (tagName === "mailboxsubscription") {
+                if (tagName == "mailboxsubscription") {
                     var mailbox = xmlResponse.getAttribute('mailbox');
                     this.onMailboxSubscription(mailbox);
                     this.doXimssMailboxRightsGet(mailbox);
                 }
 
-                if (tagName === "mailboxrights") {
+                if (tagName == "mailboxrights") {
                     var mailbox = xmlResponse.getAttribute('mailbox');
                     this.onXimssRights(mailbox);
                 }
 
 
-                if (tagName === "prefs") {
+                if (tagName == "prefs") {
                     var type = xmlResponse.getAttribute('type');
-                    if (type === "custom") {
+                    if (type == "custom") {
                         var answer = xmlResponse.firstChild;
                         this.onXimssPrefsCustom(answer);
                     } else {
@@ -4627,7 +4713,7 @@ function XimssSession() {
                     }
                 }
 
-                if (tagName === "banner") {
+                if (tagName == "banner") {
                     this.onXimssBanner(xmlResponse);
                 }
             }
@@ -4637,15 +4723,15 @@ function XimssSession() {
         ximssRecoverCallback: function (xmlResponse) {
 
             xmlResponse = this.str2xml(xmlResponse);
-            if (DEBUG_SIPNET === true) console.log("%cS: " + (new XMLSerializer()).serializeToString(xmlResponse), "color:blue;");
-            if (xmlResponse === null) return;
+            if (DEBUG_SIPNET == true) console.log("%cS: " + (new XMLSerializer()).serializeToString(xmlResponse), "color:blue;");
+            if (xmlResponse == null) return;
             var tagName = xmlResponse.childNodes[0].tagName.toLowerCase();
 
-            if (tagName === "response") {
+            if (tagName == "response") {
                 var errorText = xmlResponse.childNodes[0].getAttribute("errorText");
                 var errorNum = xmlResponse.childNodes[0].getAttribute("errorNum");
 
-                if (errorText === null) {
+                if (errorText == null) {
                     this.onXimssRecoverPassword('Ok');
                 } else {
                     this.onXimssRecoverPassword(errorText);
@@ -4796,7 +4882,7 @@ function XimssSession() {
 
         checkDevices: function () {
             if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
-                if (DEBUG_SIPNET === true) console.log("enumerateDevices() not supported.");
+                if (DEBUG_SIPNET == true) console.log("enumerateDevices() not supported.");
                 return;
             }
 
@@ -4809,11 +4895,11 @@ function XimssSession() {
         },
 
         handleError: function (error) {
-            if (DEBUG_SIPNET === true) console.log('navigator.getUserMedia error: ', error);
+            if (DEBUG_SIPNET == true) console.log('navigator.getUserMedia error: ', error);
         },
 
         gotDevices: function (deviceInfos, self) {
-            if (DEBUG_SIPNET === true) console.log('gotDevices...');
+            if (DEBUG_SIPNET == true) console.log('gotDevices...');
 
             self.audioDevices = [];
             self.videoDevices = [];
@@ -4823,10 +4909,10 @@ function XimssSession() {
 
 
                 if (deviceInfo.kind === 'audioinput') {
-                    if (DEBUG_SIPNET === true) console.log("A:" + deviceInfo.deviceId);
+                    if (DEBUG_SIPNET == true) console.log("A:" + deviceInfo.deviceId);
                     self.audioDevices.push(deviceInfo.deviceId);
                 } else if (deviceInfo.kind === 'videoinput') {
-                    if (DEBUG_SIPNET === true) console.log("V:" + deviceInfo.deviceId);
+                    if (DEBUG_SIPNET == true) console.log("V:" + deviceInfo.deviceId);
                     self.videoDevices.push(deviceInfo.deviceId);
                 }
             }
@@ -4860,11 +4946,11 @@ function XimssSession() {
             }
 
             for (var i = 0; i < v1parts.length; ++i) {
-                if (v2parts.length === i) {
+                if (v2parts.length == i) {
                     return 1;
                 }
 
-                if (v1parts[i] === v2parts[i]) {
+                if (v1parts[i] == v2parts[i]) {
                     continue;
                 }
                 else if (v1parts[i] > v2parts[i]) {
@@ -4875,7 +4961,7 @@ function XimssSession() {
                 }
             }
 
-            if (v1parts.length !== v2parts.length) {
+            if (v1parts.length != v2parts.length) {
                 return -1;
             }
 
@@ -4892,8 +4978,8 @@ function XimssSession() {
 
         function XMLAttrs2Text(xmlData, eolString) {
             var result = "";
-            for (var xmlAttr = xmlData.firstChild; xmlAttr !== null; xmlAttr = xmlAttr.nextSibling) {
-                if (xmlAttr.tagName === "attr") {
+            for (var xmlAttr = xmlData.firstChild; xmlAttr != null; xmlAttr = xmlAttr.nextSibling) {
+                if (xmlAttr.tagName == "attr") {
                     result += "a=" + xmlAttr.getAttribute("name") + (xmlAttr.hasChildNodes() ? ":" + xmlAttr.textContent : "") + eolString;
                 }
             }
@@ -4904,20 +4990,20 @@ function XimssSession() {
             var theIP = SDPXML.parseXMLIPPair(xmlMedia.getAttribute("ip"));
 
             var codecs = "", codecList = "", id, x;
-            for (var xmlCodec = xmlMedia.firstChild; xmlCodec !== null; xmlCodec = xmlCodec.nextSibling) {
-                if (xmlCodec.tagName === "codec" && (id = xmlCodec.getAttribute("id")) !== null) {
+            for (var xmlCodec = xmlMedia.firstChild; xmlCodec != null; xmlCodec = xmlCodec.nextSibling) {
+                if (xmlCodec.tagName == "codec" && (id = xmlCodec.getAttribute("id")) != null) {
                     codecs += "a=rtpmap:" + id + " " + xmlCodec.getAttribute("name") + eolString;
-                    if ((x = xmlCodec.getAttribute("format")) !== null) codecs += "a=fmtp:" + id + " " + x + eolString;
+                    if ((x = xmlCodec.getAttribute("format")) != null) codecs += "a=fmtp:" + id + " " + x + eolString;
                     codecList += " " + id;
                 }
             }
 
             var result = "m=" + xmlMedia.getAttribute("media") + " " + theIP[1] + " " + xmlMedia.getAttribute("protocol") + codecList + eolString;
-            if (theIP[0] !== defaultIP) result += "c=" + SDPXML.composeTextIP(theIP[0]) + eolString;
+            if (theIP[0] != defaultIP) result += "c=" + SDPXML.composeTextIP(theIP[0]) + eolString;
 
-            if ((x = xmlMedia.getAttribute("direction")) !== null) result += "a=" + x + eolString;
-            if ((x = xmlMedia.getAttribute("ptime")) !== null) result += "a=ptime:" + x + eolString;
-            if ((x = xmlMedia.getAttribute("rtcp")) !== null) {
+            if ((x = xmlMedia.getAttribute("direction")) != null) result += "a=" + x + eolString;
+            if ((x = xmlMedia.getAttribute("ptime")) != null) result += "a=ptime:" + x + eolString;
+            if ((x = xmlMedia.getAttribute("rtcp")) != null) {
                 x = SDPXML.parseXMLIPPair(x);
                 result += "a=rtcp:" + x[1] + " " + SDPXML.composeTextIP(x[0]) + eolString;
             }
@@ -4926,7 +5012,7 @@ function XimssSession() {
             return (result);
         }
 
-        if (eolString === null) eolString = "\r\n";
+        if (eolString == null) eolString = "\r\n";
 
         var defaultIP = xmlSDP.getAttribute("ip"), subject = xmlSDP.getAttribute("subject");
 
@@ -4934,15 +5020,15 @@ function XimssSession() {
         result += "o=" + xmlSDP.getAttribute("origUser") + " " + xmlSDP.getAttribute("sessionID") + " " +
             xmlSDP.getAttribute("sessionVersion") + " " + SDPXML.composeTextIP(xmlSDP.getAttribute("origIP")) + eolString;
 
-        result += "s=" + (subject === null || subject === "" ? "-" : subject) + eolString;
+        result += "s=" + (subject == null || subject == "" ? "-" : subject) + eolString;
 
-        if (defaultIP !== null) result += "c=" + SDPXML.composeTextIP(defaultIP) + eolString;
+        if (defaultIP != null) result += "c=" + SDPXML.composeTextIP(defaultIP) + eolString;
         result += "t=0 0" + eolString;
 
         result += XMLAttrs2Text(xmlSDP, eolString);
 
-        for (var xmlMedia = xmlSDP.firstChild; xmlMedia !== null; xmlMedia = xmlMedia.nextSibling) {
-            if (xmlMedia.tagName === "media") result += mediaXML2Text(xmlMedia, defaultIP, eolString);
+        for (var xmlMedia = xmlSDP.firstChild; xmlMedia != null; xmlMedia = xmlMedia.nextSibling) {
+            if (xmlMedia.tagName == "media") result += mediaXML2Text(xmlMedia, defaultIP, eolString);
         }
         return (result);
     };
@@ -4951,11 +5037,11 @@ function XimssSession() {
     SDPXML.parseText = function (textSDP, xmlDocument, eolString) {
         "use strict";
 
-        if (eolString === null) eolString = "\r\n";
+        if (eolString == null) eolString = "\r\n";
 
         function parseTextIP(text) {
-            if (text === null || (text.substring(0, 7) !== "IN IP4 " && text.substring(0, 7) !== "IN IP6 ")) return ("null");
-            return (text.charAt(7) === "[" ? text.substring(7) : "[" + text.substring(7) + "]");
+            if (text == null || (text.substring(0, 7) != "IN IP4 " && text.substring(0, 7) != "IN IP6 ")) return ("null");
+            return (text.charAt(7) == "[" ? text.substring(7) : "[" + text.substring(7) + "]");
         }
 
         function addAttributeToXML(value, xmlData, mediaCodecs) {
@@ -4970,30 +5056,30 @@ function XimssSession() {
             }
 
             function getPrefix() {
-                if (value === null || (nameEnd = value.indexOf(' ')) < 0) return (false);
+                if (value == null || (nameEnd = value.indexOf(' ')) < 0) return (false);
                 parts = [value.substring(0, nameEnd), value.substring(nameEnd + 1)];
                 return (true);
             }
 
 
-            if (mediaCodecs !== null) {
-                if (name === "sendrecv" || name === "sendonly" || name === "recvonly" || name === "inactive") {
+            if (mediaCodecs != null) {
+                if (name == "sendrecv" || name == "sendonly" || name == "recvonly" || name == "inactive") {
                     xmlData.setAttribute("direction", name);
                     return;
                 }
-                if (name === "ptime") {
+                if (name == "ptime") {
                     xmlData.setAttribute("ptime", value);
                     return;
                 }
-                if (name === "rtcp") {
+                if (name == "rtcp") {
                     xmlData.setAttribute("rtcp", getPrefix() ?
                         parseTextIP(parts[1]) + ":" + parts[0] : "[0.0.0.0]:" + value);
                     return;
                 }
 
-                if ((name === "rtpmap" || name === "fmtp") && getPrefix() &&
-                    (xmlCodec = mediaCodecs[parts[0]]) !== null) {
-                    xmlCodec.setAttribute(name === "rtpmap" ? "name" : "format", parts[1]);
+                if ((name == "rtpmap" || name == "fmtp") && getPrefix() &&
+                    (xmlCodec = mediaCodecs[parts[0]]) != null) {
+                    xmlCodec.setAttribute(name == "rtpmap" ? "name" : "format", parts[1]);
                     return;
                 }
             }
@@ -5007,16 +5093,16 @@ function XimssSession() {
         for (xLine = 0; xLine < lines.length; ++xLine) {
             var line = lines[xLine], value = line.substring(2), data, xmlCodec;
 
-            if (line.charAt(1) === "=") switch (line.charAt(0)) {
+            if (line.charAt(1) == "=") switch (line.charAt(0)) {
                 case 'c':
-                    if (xmlMedia === null) xmlSDP.setAttribute("ip", parseTextIP(value));
+                    if (xmlMedia == null) xmlSDP.setAttribute("ip", parseTextIP(value));
                     else xmlMedia.setAttribute("ip", parseTextIP(value) + ":" + mediaPort);
                     break;
                 case 's':
-                    if (xmlMedia === null && value !== "" && value !== "-") xmlSDP.setAttribute("subject", value);
+                    if (xmlMedia == null && value != "" && value != "-") xmlSDP.setAttribute("subject", value);
                     break;
                 case 'o':
-                    if (xmlMedia === null) {
+                    if (xmlMedia == null) {
                         data = value.split(" ");
                         xmlSDP.setAttribute("origUser", data.shift());
                         xmlSDP.setAttribute("sessionID", data.shift());
@@ -5025,7 +5111,7 @@ function XimssSession() {
                     }
                     break;
                 case 'a':
-                    addAttributeToXML(value, (xmlMedia !== null ? xmlMedia : xmlSDP), codecs);
+                    addAttributeToXML(value, (xmlMedia != null ? xmlMedia : xmlSDP), codecs);
                     break;
                 case 'm':
                     xmlSDP.appendChild(xmlMedia = xmlDocument.createElement("media"));
@@ -5051,13 +5137,13 @@ function XimssSession() {
 
         function adjustMedia(xmlMedia) {
 
-            if (xmlMedia.getAttribute("protocol").toLowerCase().substring(0, 4) === "rtp/" &&
-                SDPXML.findAttribute(xmlMedia, "setup") !== null || SDPXML.findAttribute(xmlSDP, "setup") !== null) xmlMedia.setAttribute("protocol", "RTP/SAVPF");
+            if (xmlMedia.getAttribute("protocol").toLowerCase().substring(0, 4) == "rtp/" &&
+                SDPXML.findAttribute(xmlMedia, "setup") != null || SDPXML.findAttribute(xmlSDP, "setup") != null) xmlMedia.setAttribute("protocol", "RTP/SAVPF");
 
 
-            if (SDPXML.findAttribute(xmlMedia, "candidate") === null && (SDPXML.findAttribute(xmlMedia, "ice-ufrag") !== null || SDPXML.findAttribute(xmlSDP, "ice-ufrag") !== null)) {
+            if (SDPXML.findAttribute(xmlMedia, "candidate") == null && (SDPXML.findAttribute(xmlMedia, "ice-ufrag") != null || SDPXML.findAttribute(xmlSDP, "ice-ufrag") != null)) {
                 var ipPair = SDPXML.parseXMLIPPair(xmlMedia.getAttribute("ip"));
-                if (ipPair[0].charAt(0) === "[") ipPair[0] = ipPair[0].substring(1, ipPair[0].indexOf("]"));
+                if (ipPair[0].charAt(0) == "[") ipPair[0] = ipPair[0].substring(1, ipPair[0].indexOf("]"));
                 SDPXML.addAttribute(xmlMedia, "candidate", "7777777 1 UDP 77 " + ipPair[0] + " " + ipPair[1] + " typ host");
             }
 
@@ -5065,8 +5151,8 @@ function XimssSession() {
         }
 
         if(xmlSDP){
-            for (var xmlMedia = xmlSDP.firstChild; xmlMedia !== null; xmlMedia = xmlMedia.nextSibling) {
-                if (xmlMedia.tagName === "media") adjustMedia(xmlMedia);
+            for (var xmlMedia = xmlSDP.firstChild; xmlMedia != null; xmlMedia = xmlMedia.nextSibling) {
+                if (xmlMedia.tagName == "media") adjustMedia(xmlMedia);
             }
             SDPXML.removeAttributes(xmlSDP, "crypto");
         }
@@ -5080,11 +5166,11 @@ function XimssSession() {
 
         function adjustMedia(xmlMedia) {
 
-            if (xmlMedia.getAttribute("protocol").toLowerCase().substring(0, 4) === "udp/" &&
-                SDPXML.findAttribute(xmlMedia, "setup") !== null || SDPXML.findAttribute(xmlSDP, "setup") !== null) xmlMedia.setAttribute("protocol", "RTP/SAVPF");
+            if (xmlMedia.getAttribute("protocol").toLowerCase().substring(0, 4) == "udp/" &&
+                SDPXML.findAttribute(xmlMedia, "setup") != null || SDPXML.findAttribute(xmlSDP, "setup") != null) xmlMedia.setAttribute("protocol", "RTP/SAVPF");
 
             //var ipPair = SDPXML.parseXMLIPPair(xmlMedia.getAttribute("ip"));
-            //if (ipPair[1] !== "0") xmlMedia.setAttribute("ip", "[10.255.255.255]:" + ipPair[1]);
+            //if (ipPair[1] != "0") xmlMedia.setAttribute("ip", "[10.255.255.255]:" + ipPair[1]);
         }
 
         var detectorInfo = null;
@@ -5094,19 +5180,19 @@ function XimssSession() {
             detectorInfoStr = detectorInfo["os"] + ' ' + detectorInfo["os_version"] + ' ' + detectorInfo["os_platform"] + ' ' + detectorInfo["client"] + ' ' + detectorInfo["client_name"] + ' ' + detectorInfo["client_version"] + ' ' + detectorInfo["device_brand"] + ' ' + detectorInfo["device_model"] + ' ' + detectorInfo["display"];
             detectorInfoStr = detectorInfoStr.replace(/\s+/g, " ");
         } catch (e) {
-            if (DEBUG_SIPNET === true) console.log("No detector found!");
+            if (DEBUG_SIPNET == true) console.log("No detector found!");
         }
 
         if (detectorInfo !== null) {
-            SDPXML.addAttribute(xmlSDP, "webrtc", webRTCVersion === null ? detectorInfoStr : webRTCVersion);
+            SDPXML.addAttribute(xmlSDP, "webrtc", webRTCVersion == null ? detectorInfoStr : webRTCVersion);
         } else {
-            SDPXML.addAttribute(xmlSDP, "webrtc", webRTCVersion === null ? "yes" : webRTCVersion);
+            SDPXML.addAttribute(xmlSDP, "webrtc", webRTCVersion == null ? "yes" : webRTCVersion);
         }
 
-        if (newOrigUser !== null && newOrigUser.indexOf(" ") < 0) xmlSDP.setAttribute("origUser", newOrigUser);
+        if (newOrigUser != null && newOrigUser.indexOf(" ") < 0) xmlSDP.setAttribute("origUser", newOrigUser);
 
-        for (var xmlMedia = xmlSDP.firstChild; xmlMedia !== null; xmlMedia = xmlMedia.nextSibling) {
-            if (xmlMedia.tagName === "media") adjustMedia(xmlMedia);
+        for (var xmlMedia = xmlSDP.firstChild; xmlMedia != null; xmlMedia = xmlMedia.nextSibling) {
+            if (xmlMedia.tagName == "media") adjustMedia(xmlMedia);
         }
 
 
@@ -5116,9 +5202,9 @@ function XimssSession() {
 
     SDPXML.setActiveMediaDirection = function (xmlSDP, newDirection) {
         "use strict";
-        for (var xmlMedia = xmlSDP.firstChild; xmlMedia !== null; xmlMedia = xmlMedia.nextSibling) {
-            if (xmlMedia.tagName === "media" && xmlMedia.getAttribute("direction") !== "inactive" &&
-                SDPXML.parseXMLIPPair(xmlMedia.getAttribute("ip"))[1] !== "0") xmlMedia.setAttribute("direction", newDirection);
+        for (var xmlMedia = xmlSDP.firstChild; xmlMedia != null; xmlMedia = xmlMedia.nextSibling) {
+            if (xmlMedia.tagName == "media" && xmlMedia.getAttribute("direction") != "inactive" &&
+                SDPXML.parseXMLIPPair(xmlMedia.getAttribute("ip"))[1] != "0") xmlMedia.setAttribute("direction", newDirection);
         }
     };
 
@@ -5126,40 +5212,40 @@ function XimssSession() {
     SDPXML.removeNonAudioMedia = function (xmlSDP) {
         "use strict";
         var result = [], nextMedia;
-        for (var xmlMedia = xmlSDP.firstChild; xmlMedia !== null; xmlMedia = nextMedia) {
+        for (var xmlMedia = xmlSDP.firstChild; xmlMedia != null; xmlMedia = nextMedia) {
             nextMedia = xmlMedia.nextSibling;
-            if (xmlMedia.tagName === "media") {
-                if (xmlMedia.getAttribute("media") === "audio") result.push("*");
+            if (xmlMedia.tagName == "media") {
+                if (xmlMedia.getAttribute("media") == "audio") result.push("*");
                 else {
                     result.push(xmlMedia.getAttribute("media"));
                     xmlSDP.removeChild(xmlMedia);
                 }
             }
         }
-        return (result.length === 0 || (result.length === 1 && result[0] === "*") ? null : result);
+        return (result.length == 0 || (result.length == 1 && result[0] == "*") ? null : result);
     };
 
 
     SDPXML.addDummyMedia = function (xmlSDP, otherMedia) {
         "use strict";
-        if (otherMedia === null) return;
+        if (otherMedia == null) return;
         var nextMedia = xmlSDP.firstChild;
-        while (nextMedia !== null && nextMedia.tagName !== "media") nextMedia = nextMedia.nextSibling;
+        while (nextMedia != null && nextMedia.tagName != "media") nextMedia = nextMedia.nextSibling;
 
         for (var index = 0; index < otherMedia.length; ++index) {
-            if (otherMedia[index] !== "*") {
+            if (otherMedia[index] != "*") {
                 var dummyMedia = xmlSDP.ownerDocument.createElement("media");
                 dummyMedia.setAttribute("media", otherMedia[index]);
                 dummyMedia.setAttribute("ip", "[0.0.0.0]:0");
                 dummyMedia.setAttribute("direction", "inactive");
-                if (otherMedia[index] === "video") {
+                if (otherMedia[index] == "video") {
                     var dummyCodec = xmlSDP.ownerDocument.createElement("codec");
                     dummyCodec.setAttribute("id", "177");
                     dummyCodec.setAttribute("name", "dummy/8000");
                     dummyMedia.appendChild(dummyCodec);
                 }
                 xmlSDP.insertBefore(dummyMedia, nextMedia);
-            } else if (nextMedia !== null) {
+            } else if (nextMedia != null) {
                 nextMedia = nextMedia.nextSibling;
             }
         }
@@ -5169,11 +5255,11 @@ function XimssSession() {
     SDPXML.isOnHold = function (xmlSDP) {
         "use strict";
 
-        if (SDPXML.findAttribute(xmlSDP, "x-moh") !== null) return (true);
+        if (SDPXML.findAttribute(xmlSDP, "x-moh") != null) return (true);
 
-        for (var xmlMedia = xmlSDP.firstChild; xmlMedia !== null; xmlMedia = xmlMedia.nextSibling) {
-            if (xmlMedia.tagName === "media" && xmlMedia.getAttribute("media") === "audio") {
-                return (SDPXML.findAttribute(xmlSDP, "x-moh") !== null || xmlMedia.getAttribute("direction") === "inactive" || xmlMedia.getAttribute("direction") === "sendonly");
+        for (var xmlMedia = xmlSDP.firstChild; xmlMedia != null; xmlMedia = xmlMedia.nextSibling) {
+            if (xmlMedia.tagName == "media" && xmlMedia.getAttribute("media") == "audio") {
+                return (SDPXML.findAttribute(xmlSDP, "x-moh") != null || xmlMedia.getAttribute("direction") == "inactive" || xmlMedia.getAttribute("direction") == "sendonly");
             }
         }
         return (false);
@@ -5182,23 +5268,23 @@ function XimssSession() {
 
     SDPXML.composeTextIP = function (theIP) {
         "use strict";
-        if (theIP === null) theIP = "[0.0.0.0]";
-        if (theIP.charAt(0) === "[") theIP = theIP.substring(1, theIP.indexOf("]"));
+        if (theIP == null) theIP = "[0.0.0.0]";
+        if (theIP.charAt(0) == "[") theIP = theIP.substring(1, theIP.indexOf("]"));
         return ("IN " + (theIP.indexOf(":") >= 0 ? "IP6 " : "IP4 ") + theIP);
     };
 
 
     SDPXML.parseXMLIPPair = function (theIP) {
         "use strict";
-        if (theIP === null) return (["[0.0.0.0]", "0"]);
+        if (theIP == null) return (["[0.0.0.0]", "0"]);
         var x = theIP.lastIndexOf(":");
         return (x >= 0 ? [theIP.substring(0, x), theIP.substring(x + 1)] : [theIP, "0"]);
     };
 
     SDPXML.findAttribute = function (xmlData, name) {
         "use strict";
-        for (var xmlAttr = xmlData.firstChild; xmlAttr !== null; xmlAttr = xmlAttr.nextSibling) {
-            if (xmlAttr.tagName === "attr" && xmlAttr.getAttribute("name") === name) return (xmlAttr);
+        for (var xmlAttr = xmlData.firstChild; xmlAttr != null; xmlAttr = xmlAttr.nextSibling) {
+            if (xmlAttr.tagName == "attr" && xmlAttr.getAttribute("name") == name) return (xmlAttr);
         }
         return (null);
     };
@@ -5208,14 +5294,14 @@ function XimssSession() {
         var xmlAttr = xmlData.ownerDocument.createElement("attr");
         xmlData.appendChild(xmlAttr);
         xmlAttr.setAttribute("name", name);
-        if (value !== null) xmlAttr.textContent = value;
+        if (value != null) xmlAttr.textContent = value;
     };
 
     SDPXML.removeAttributes = function (xmlData, name) {
         "use strict";
-        for (var xmlAttr = xmlData.firstChild; xmlAttr !== null;) {
+        for (var xmlAttr = xmlData.firstChild; xmlAttr != null;) {
             var nextAttr = xmlAttr.nextSibling;
-            if (xmlAttr.tagName === "attr" && xmlAttr.getAttribute("name") === name) xmlData.removeChild(xmlAttr);
+            if (xmlAttr.tagName == "attr" && xmlAttr.getAttribute("name") == name) xmlData.removeChild(xmlAttr);
             xmlAttr = nextAttr;
         }
         return (null);
@@ -5225,4 +5311,4 @@ function XimssSession() {
 }
 
 var ximssSession = new XimssSession();
-if (DEBUG_SIPNET === true) console.log(ximssSession);
+if (DEBUG_SIPNET == true) console.log(ximssSession);
